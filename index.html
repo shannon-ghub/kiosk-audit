@@ -6,216 +6,199 @@
 <title>Kiosk Audit System</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #f5f4f0;
-    --surface: #ffffff;
-    --surface2: #eeecea;
-    --border: #d8d5cf;
-    --accent: #1a6bff;
-    --accent2: #ff4d00;
-    --text: #1a1917;
-    --text2: #6b6760;
-    --ok: #16a34a;
-    --warn: #d97706;
-    --error: #dc2626;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
-    --radius: 6px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: var(--sans); background: var(--bg); color: var(--text); min-height: 100vh; }
+:root{
+  --bg:#f5f4f0;--surface:#fff;--surface2:#eeecea;--border:#d8d5cf;
+  --accent:#1a6bff;--text:#1a1917;--text2:#6b6760;
+  --ok:#16a34a;--warn:#d97706;--error:#dc2626;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;--r:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
 
-  /* ─── LOGIN SCREEN ─── */
-  #login-screen {
-    display: flex; align-items: center; justify-content: center;
-    min-height: 100vh; background: var(--bg);
-  }
-  .login-box {
-    background: var(--surface); border: 1.5px solid var(--border);
-    border-radius: 10px; padding: 48px 40px; width: 400px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.07);
-  }
-  .login-box .logo { font-family: var(--mono); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--text2); margin-bottom: 28px; }
-  .login-box h1 { font-size: 26px; font-weight: 600; margin-bottom: 6px; }
-  .login-box p { color: var(--text2); font-size: 14px; margin-bottom: 32px; }
-  .field label { display: block; font-size: 12px; font-weight: 500; letter-spacing: .5px; text-transform: uppercase; color: var(--text2); margin-bottom: 7px; }
-  .field input { width: 100%; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: var(--radius); font-family: var(--sans); font-size: 15px; background: var(--bg); color: var(--text); outline: none; transition: border .2s; }
-  .field input:focus { border-color: var(--accent); }
-  .btn-primary { width: 100%; padding: 12px; background: var(--text); color: #fff; border: none; border-radius: var(--radius); font-family: var(--sans); font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 20px; transition: background .2s; }
-  .btn-primary:hover { background: var(--accent); }
+/* ── AUDITOR PICKER SCREEN ── */
+#picker-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:0;}
+.picker-box{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:44px 40px;width:440px;max-width:95vw;box-shadow:0 6px 32px rgba(0,0,0,.08);}
+.picker-logo{font-family:var(--mono);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text2);margin-bottom:26px;}
+.picker-box h1{font-size:24px;font-weight:600;margin-bottom:6px;}
+.picker-box p{color:var(--text2);font-size:14px;margin-bottom:28px;}
+.picker-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:260px;overflow-y:auto;}
+.picker-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:border-color .15s,background .15s;font-size:14px;}
+.picker-item:hover{border-color:var(--accent);background:#f0f5ff;}
+.picker-item.selected{border-color:var(--accent);background:#eef3ff;}
+.picker-item .avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;flex-shrink:0;}
+.picker-divider{display:flex;align-items:center;gap:10px;color:var(--text2);font-size:12px;margin:4px 0;}
+.picker-divider::before,.picker-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.picker-manual{display:flex;gap:8px;margin-bottom:4px;}
+.picker-manual input{flex:1;padding:9px 13px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:14px;background:var(--bg);color:var(--text);outline:none;transition:border .2s;}
+.picker-manual input:focus{border-color:var(--accent);}
+.picker-loading{text-align:center;padding:20px;color:var(--text2);font-size:13px;font-family:var(--mono);}
 
-  /* ─── APP SHELL ─── */
-  #app { display: none; flex-direction: column; min-height: 100vh; }
-  #app.visible { display: flex; }
-  header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 28px; background: var(--text); color: #fff;
-    border-bottom: 1px solid #2d2c2a; position: sticky; top: 0; z-index: 100;
-  }
-  .header-left { display: flex; align-items: center; gap: 16px; }
-  .header-logo { font-family: var(--mono); font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #888; }
-  .header-title { font-size: 15px; font-weight: 500; }
-  .header-right { display: flex; align-items: center; gap: 16px; }
-  .auditor-pill { background: #2d2c2a; padding: 6px 14px; border-radius: 20px; font-size: 13px; color: #ccc; font-family: var(--mono); }
-  .header-date { font-family: var(--mono); font-size: 12px; color: #888; }
+/* ── APP SHELL ── */
+#app{display:none;flex-direction:column;min-height:100vh;}
+#app.visible{display:flex;}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--text);color:#fff;position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:12px;}
+.header-logo{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#666;}
+.header-title{font-size:14px;font-weight:500;}
+.header-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.hpill{background:#2d2c2a;padding:5px 12px;border-radius:20px;font-size:12px;color:#ccc;font-family:var(--mono);}
+.hdate{font-family:var(--mono);font-size:11px;color:#666;}
+.hbtn{background:#2d2c2a;border:none;padding:5px 12px;border-radius:20px;font-size:11px;color:#bbb;cursor:pointer;font-family:var(--mono);transition:background .2s;white-space:nowrap;}
+.hbtn:hover{background:#555;}
+.hbtn.warn:hover{background:#b45309;color:#fff;}
 
-  nav {
-    display: flex; gap: 0; background: var(--surface); border-bottom: 1.5px solid var(--border);
-    padding: 0 28px;
-  }
-  nav button {
-    background: none; border: none; border-bottom: 2.5px solid transparent;
-    padding: 14px 18px; font-family: var(--sans); font-size: 14px; font-weight: 500;
-    color: var(--text2); cursor: pointer; transition: color .15s, border-color .15s;
-    margin-bottom: -1.5px;
-  }
-  nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
-  nav button:hover:not(.active) { color: var(--text); }
+nav{display:flex;background:var(--surface);border-bottom:1.5px solid var(--border);padding:0 24px;}
+nav button{background:none;border:none;border-bottom:2.5px solid transparent;padding:12px 16px;font-family:var(--sans);font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:color .15s,border-color .15s;margin-bottom:-1.5px;}
+nav button.active{color:var(--accent);border-bottom-color:var(--accent);}
+nav button:hover:not(.active){color:var(--text);}
 
-  main { flex: 1; padding: 28px; max-width: 1200px; margin: 0 auto; width: 100%; }
+main{flex:1;padding:24px;max-width:1360px;margin:0 auto;width:100%;}
 
-  /* ─── SECTION HEADERS ─── */
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
-  .section-header h2 { font-size: 20px; font-weight: 600; }
-  .section-header p { color: var(--text2); font-size: 13px; margin-top: 3px; }
-  .btn { padding: 9px 18px; border-radius: var(--radius); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; border: 1.5px solid transparent; transition: all .15s; }
-  .btn-blue { background: var(--accent); color: #fff; }
-  .btn-blue:hover { background: #0052d9; }
-  .btn-outline { background: var(--surface); color: var(--text); border-color: var(--border); }
-  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
-  .btn-sm { padding: 5px 12px; font-size: 12px; }
-  .btn-danger { background: #fee2e2; color: var(--error); border-color: #fca5a5; }
-  .btn-danger:hover { background: var(--error); color: #fff; }
+/* ── FIELDS ── */
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:14px;background:var(--bg);color:var(--text);outline:none;transition:border .2s;resize:vertical;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
+.field textarea{min-height:68px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 
-  /* ─── KIOSK GRID ─── */
-  .kiosk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 16px; }
-  .kiosk-card {
-    background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px;
-    padding: 20px; cursor: pointer; transition: border-color .2s, box-shadow .2s; position: relative;
-  }
-  .kiosk-card:hover { border-color: var(--accent); box-shadow: 0 4px 20px rgba(26,107,255,.1); }
-  .kiosk-card .k-id { font-family: var(--mono); font-size: 16px; font-weight: 600; margin-bottom: 10px; }
-  .kiosk-card .k-meta { display: flex; flex-direction: column; gap: 5px; }
-  .kiosk-card .k-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); }
-  .kiosk-card .k-row span:first-child { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #aaa; width: 56px; flex-shrink: 0; }
-  .kiosk-card .k-row .val { color: var(--text); font-weight: 500; }
-  .kiosk-card .k-status { position: absolute; top: 16px; right: 16px; }
-  .badge { padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; font-family: var(--mono); text-transform: uppercase; letter-spacing: .5px; }
-  .badge-ok { background: #dcfce7; color: var(--ok); }
-  .badge-warn { background: #fef3c7; color: var(--warn); }
-  .badge-error { background: #fee2e2; color: var(--error); }
-  .badge-staging { background: #e0e7ff; color: #4338ca; }
-  .badge-prod { background: #fce7f3; color: #9d174d; }
-  .badge-neutral { background: var(--surface2); color: var(--text2); }
+/* ── BUTTONS ── */
+.btn{padding:8px 16px;border-radius:var(--r);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid transparent;transition:all .15s;}
+.btn-primary{width:100%;padding:12px;background:var(--text);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:500;cursor:pointer;margin-top:16px;transition:background .2s;font-family:var(--sans);}
+.btn-primary:hover{background:var(--accent);}
+.btn-blue{background:var(--accent);color:#fff;border-color:var(--accent);}
+.btn-blue:hover{background:#0052d9;}
+.btn-outline{background:var(--surface);color:var(--text);border-color:var(--border);}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-danger{background:#fee2e2;color:var(--error);border-color:#fca5a5;}
+.btn-danger:hover{background:var(--error);color:#fff;}
+.btn-sm{padding:4px 11px;font-size:12px;}
 
-  .kiosk-card .k-findings { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); font-size: 13px; }
-  .kiosk-card .k-findings .f-label { font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .5px; color: #aaa; margin-bottom: 4px; }
-  .kiosk-card .k-findings .f-text { color: var(--text); }
+/* ── SAVE BAR ── */
+.save-bar{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:10px;flex-wrap:wrap;}
+.save-bar-meta p{font-size:14px;line-height:1.5;}
+.save-bar-actions{display:flex;gap:8px;flex-wrap:wrap;}
 
-  /* ─── AUDIT INDICATOR ─── */
-  .audit-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); display: inline-block; margin-right: 6px; }
-  .audit-dot.pending { background: var(--warn); }
-  .audit-dot.none { background: #d1d5db; }
-  .kiosk-card .k-audit { margin-top: 12px; font-size: 12px; color: var(--text2); display: flex; align-items: center; }
+/* ── KIOSK TABLE ── */
+.kiosk-table-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;overflow:auto;}
+.kiosk-table{width:100%;border-collapse:collapse;font-size:13px;min-width:900px;}
+.kiosk-table thead th{background:var(--surface2);padding:10px 12px;text-align:left;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;color:var(--text2);font-weight:500;border-bottom:1.5px solid var(--border);white-space:nowrap;}
+.kiosk-table tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
+.kiosk-table tbody tr:last-child{border-bottom:none;}
+.kiosk-table tbody tr:hover{background:#fafaf7;}
+.kiosk-table td{padding:8px 12px;vertical-align:middle;}
+.td-tid{font-family:var(--mono);font-weight:600;font-size:12px;white-space:nowrap;}
+.td-edit{cursor:text;}
+.td-edit:hover{background:#eef3ff;}
+.iinput{width:100%;border:none;background:transparent;font-family:var(--sans);font-size:13px;color:var(--text);outline:none;padding:0;min-width:90px;}
+.iinput:focus{background:#fff;border-radius:3px;padding:1px 5px;box-shadow:0 0 0 2px var(--accent);}
+.iselect{border:none;background:transparent;font-family:var(--sans);font-size:13px;color:var(--text);outline:none;cursor:pointer;padding:0;width:100%;}
+.td-center{text-align:center;}
+.adot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.adot.done{background:var(--ok);}
+.adot.none{background:#d1d5db;}
 
-  /* ─── MODAL ─── */
-  .modal-bg {
-    display: none; position: fixed; inset: 0; background: rgba(26,25,23,.45);
-    z-index: 200; align-items: center; justify-content: center;
-  }
-  .modal-bg.open { display: flex; }
-  .modal {
-    background: var(--surface); border-radius: 10px; border: 1.5px solid var(--border);
-    width: 560px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
-    box-shadow: 0 12px 48px rgba(0,0,0,.15);
-  }
-  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 22px 24px 18px; border-bottom: 1px solid var(--border); }
-  .modal-header h3 { font-size: 17px; font-weight: 600; }
-  .modal-close { background: none; border: none; font-size: 22px; color: var(--text2); cursor: pointer; line-height: 1; }
-  .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 18px; }
-  .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .5px; color: var(--text2); }
-  .field input, .field select, .field textarea {
-    padding: 9px 13px; border: 1.5px solid var(--border); border-radius: var(--radius);
-    font-family: var(--sans); font-size: 14px; background: var(--bg); color: var(--text); outline: none; transition: border .2s;
-    resize: vertical;
-  }
-  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
-  .field textarea { min-height: 80px; }
+/* ── BADGES ── */
+.badge{padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--mono);text-transform:uppercase;letter-spacing:.3px;}
+.badge-ok{background:#dcfce7;color:var(--ok);}
+.badge-warn{background:#fef3c7;color:var(--warn);}
+.badge-error{background:#fee2e2;color:var(--error);}
+.badge-staging{background:#e0e7ff;color:#4338ca;}
+.badge-prod{background:#fce7f3;color:#9d174d;}
 
-  /* ─── DASHBOARD ─── */
-  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
-  .stat-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; padding: 18px 20px; }
-  .stat-card .s-label { font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .5px; color: var(--text2); margin-bottom: 10px; }
-  .stat-card .s-val { font-size: 32px; font-weight: 600; font-family: var(--mono); }
-  .stat-card.ok .s-val { color: var(--ok); }
-  .stat-card.warn .s-val { color: var(--warn); }
-  .stat-card.err .s-val { color: var(--error); }
+/* ── DASHBOARD ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:16px 18px;}
+.stat-card .sl{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;}
+.stat-card .sv{font-size:30px;font-weight:600;font-family:var(--mono);}
+.stat-card.ok .sv{color:var(--ok);}
+.stat-card.warn .sv{color:var(--warn);}
+.stat-card.err .sv{color:var(--error);}
+.sessions-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;overflow:hidden;}
+.sessions-wrap table{width:100%;border-collapse:collapse;font-size:13px;}
+.sessions-wrap th{background:var(--surface2);padding:9px 14px;text-align:left;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;color:var(--text2);}
+.sessions-wrap td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:middle;}
+.sessions-wrap tr:hover td{background:var(--bg);}
 
-  .audit-history { background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
-  .audit-history table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .audit-history th { background: var(--surface2); padding: 11px 16px; text-align: left; font-size: 11px; font-family: var(--mono); text-transform: uppercase; letter-spacing: .5px; color: var(--text2); font-weight: 500; }
-  .audit-history td { padding: 12px 16px; border-top: 1px solid var(--border); vertical-align: top; }
-  .audit-history tr:hover td { background: var(--bg); }
-  .td-id { font-family: var(--mono); font-weight: 600; }
-  .td-finding { color: var(--text2); }
-  .td-res { color: var(--ok); }
+/* ── MODALS ── */
+.mbg{display:none;position:fixed;inset:0;background:rgba(26,25,23,.52);z-index:200;align-items:center;justify-content:center;padding:16px;}
+.mbg.open{display:flex;}
+.modal{background:var(--surface);border-radius:10px;border:1.5px solid var(--border);width:560px;max-width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 12px 48px rgba(0,0,0,.2);}
+.modal.lg{width:920px;}
+.modal.sm{width:420px;}
+.mhead{display:flex;align-items:flex-start;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
+.mhead h3{font-size:16px;font-weight:600;}
+.msub{font-size:11px;color:var(--text2);margin-top:2px;font-family:var(--mono);}
+.mclose{background:none;border:none;font-size:22px;color:var(--text2);cursor:pointer;line-height:1;padding:0 2px;flex-shrink:0;}
+.mbody{padding:22px;display:flex;flex-direction:column;gap:15px;}
+.mfoot{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
 
-  /* ─── SAVE AUDIT BUTTON AREA ─── */
-  .save-bar {
-    background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px;
-    padding: 18px 24px; display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 24px;
-  }
-  .save-bar p { font-size: 14px; color: var(--text2); }
-  .save-bar strong { color: var(--text); }
+/* ── AUDIT VIEW ── */
+.audit-meta{display:flex;gap:18px;flex-wrap:wrap;padding:12px 14px;background:var(--surface2);border-radius:var(--r);font-size:13px;margin-bottom:4px;}
+.audit-meta span{color:var(--text2);}
+.audit-meta strong{color:var(--text);}
+.avt{width:100%;border-collapse:collapse;font-size:13px;}
+.avt th{background:var(--surface2);padding:8px 11px;text-align:left;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;color:var(--text2);}
+.avt td{padding:9px 11px;border-top:1px solid var(--border);vertical-align:top;}
+.avt tr:hover td{background:#fafaf8;}
 
-  /* ─── TOAST ─── */
-  #toast {
-    position: fixed; bottom: 28px; right: 28px; background: var(--text); color: #fff;
-    padding: 13px 22px; border-radius: 8px; font-size: 14px; opacity: 0;
-    transition: opacity .3s; z-index: 999; pointer-events: none; font-family: var(--mono);
-  }
-  #toast.show { opacity: 1; }
-  #toast.success { background: var(--ok); }
-  #toast.error-toast { background: var(--error); }
+/* ── MISC ── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-header h2{font-size:18px;font-weight:600;}
+.section-header p{color:var(--text2);font-size:13px;margin-top:2px;}
+.loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:44px;color:var(--text2);font-family:var(--mono);font-size:13px;}
+.spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.empty{text-align:center;padding:48px 20px;color:var(--text2);}
+.empty h3{font-size:15px;margin-bottom:7px;color:var(--text);}
+.empty p{font-size:13px;line-height:1.7;}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:11px 18px;border-radius:8px;font-size:12px;opacity:0;transition:opacity .3s;z-index:999;pointer-events:none;font-family:var(--mono);max-width:300px;}
+#toast.show{opacity:1;}
+#toast.success{background:var(--ok);}
+#toast.error-toast{background:var(--error);}
+.url-display{font-family:var(--mono);font-size:11px;color:var(--text2);background:var(--surface2);padding:7px 11px;border-radius:var(--r);word-break:break-all;margin-top:3px;}
+.cal-input{padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:14px;background:var(--bg);color:var(--text);outline:none;transition:border .2s;cursor:pointer;}
+.cal-input:focus{border-color:var(--accent);}
+input[type=date]{color-scheme:light;}
 
-  .loading { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 48px; color: var(--text2); font-family: var(--mono); font-size: 14px; }
-  .spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+/* confirm inline */
+.confirm-row{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#fff7ed;border:1px solid #fdba74;border-radius:var(--r);font-size:12px;}
 
-  .empty { text-align: center; padding: 60px 20px; color: var(--text2); }
-  .empty h3 { font-size: 16px; margin-bottom: 8px; }
-  .empty p { font-size: 13px; }
-
-  @media (max-width: 700px) {
-    .stats-row { grid-template-columns: 1fr 1fr; }
-    .form-row { grid-template-columns: 1fr; }
-    main { padding: 16px; }
-    header { padding: 12px 16px; }
-    nav { padding: 0 16px; overflow-x: auto; }
-  }
+@media(max-width:700px){
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .form-row,.form-row3{grid-template-columns:1fr;}
+  main{padding:14px;}
+  header{padding:10px 14px;}
+  nav{padding:0 12px;overflow-x:auto;}
+}
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="logo">KAS · v1.0</div>
+<!-- ══ AUDITOR PICKER ══ -->
+<div id="picker-screen">
+  <div class="picker-box">
+    <div class="picker-logo">KAS · v3.0</div>
     <h1>Kiosk Audit System</h1>
-    <p>Enter your name to start auditing kiosks for today.</p>
-    <div class="field">
-      <label>Auditor Name</label>
-      <input type="text" id="auditor-input" placeholder="e.g. Shannon Cruz" autocomplete="off">
+    <p>Select your name to begin today's audit.</p>
+
+    <div class="picker-list" id="auditor-list">
+      <div class="picker-loading">
+        <div style="display:inline-flex;align-items:center;gap:8px;"><div class="spinner"></div> Loading auditors…</div>
+      </div>
     </div>
-    <button class="btn-primary" onclick="startSession()">Continue →</button>
+
+    <div class="picker-divider">or enter manually</div>
+    <div class="picker-manual">
+      <input type="text" id="manual-name" placeholder="Type your name…" autocomplete="off">
+      <button class="btn btn-outline" onclick="selectManual()">Use</button>
+    </div>
+    <button class="btn-primary" id="picker-continue" onclick="continueSession()" disabled>Continue →</button>
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- ══ APP ══ -->
 <div id="app">
   <header>
     <div class="header-left">
@@ -223,410 +206,558 @@
       <span class="header-title">Kiosk Audit System</span>
     </div>
     <div class="header-right">
-      <span class="header-date" id="header-date"></span>
-      <span class="auditor-pill" id="auditor-display"></span>
+      <span class="hdate" id="header-date"></span>
+      <span class="hpill" id="auditor-display"></span>
+      <button class="hbtn" onclick="openModal('date-modal')">📅 Date</button>
+      <button class="hbtn" onclick="switchAuditor()">↔ Switch Auditor</button>
+      <button class="hbtn" onclick="openSettings()">⚙ Settings</button>
     </div>
   </header>
 
   <nav>
-    <button class="active" onclick="showTab('kiosks', this)">🖥 Kiosks</button>
-    <button onclick="showTab('dashboard', this)">📊 Dashboard</button>
+    <button class="active" id="nav-kiosks" onclick="showTab('kiosks',this)">🖥 Kiosks</button>
+    <button id="nav-dashboard" onclick="showTab('dashboard',this)">📊 Dashboard</button>
   </nav>
 
   <main>
     <!-- KIOSKS TAB -->
     <div id="tab-kiosks">
       <div class="save-bar">
-        <div>
-          <p><strong id="save-bar-count">0 kiosks</strong> loaded — unsaved changes will be lost</p>
-          <p style="font-size:12px;color:#aaa;margin-top:4px;">Auditor: <strong id="save-bar-auditor"></strong></p>
+        <div class="save-bar-meta">
+          <p><strong id="save-bar-count">0 kiosks</strong> &nbsp;·&nbsp; Auditor: <strong id="save-bar-auditor"></strong> &nbsp;·&nbsp; Date: <strong id="save-bar-date"></strong></p>
+          <p style="font-size:12px;color:#aaa;margin-top:2px;">Click any cell to edit inline · Changes are local until saved</p>
         </div>
-        <div style="display:flex;gap:10px;">
+        <div class="save-bar-actions">
           <button class="btn btn-outline" onclick="loadKiosks()">⟳ Refresh</button>
-          <button class="btn btn-outline" onclick="openAddModal()">+ Add Kiosk</button>
-          <button class="btn btn-blue" onclick="saveAudit()">💾 Save Today's Audit</button>
+          <button class="btn btn-outline" onclick="openModal('add-modal')">+ Add Kiosk</button>
+          <button class="btn btn-blue" onclick="saveAudit()">💾 Save Audit</button>
         </div>
       </div>
-
       <div class="section-header">
         <div>
           <h2>Kiosk Terminals</h2>
-          <p>Click any kiosk card to edit findings and resolution</p>
+          <p>Inline editable — click any cell to update. Status auto-updates from Findings.</p>
         </div>
       </div>
-
       <div id="kiosk-list">
-        <div class="loading"><div class="spinner"></div> Loading kiosks from Google Sheets…</div>
+        <div class="loading"><div class="spinner"></div> Loading kiosks…</div>
       </div>
     </div>
 
     <!-- DASHBOARD TAB -->
     <div id="tab-dashboard" style="display:none;">
       <div class="section-header">
-        <div>
-          <h2>Audit Dashboard</h2>
-          <p>Overview of all kiosk statuses and audit history</p>
-        </div>
+        <div><h2>Audit Dashboard</h2><p>Summary and past audit sessions</p></div>
         <button class="btn btn-outline" onclick="loadDashboard()">⟳ Refresh</button>
       </div>
-
-      <div class="stats-row" id="stats-row">
-        <div class="stat-card"><div class="s-label">Total Kiosks</div><div class="s-val" id="stat-total">—</div></div>
-        <div class="stat-card ok"><div class="s-label">Status OK</div><div class="s-val" id="stat-ok">—</div></div>
-        <div class="stat-card warn"><div class="s-label">Has Issues</div><div class="s-val" id="stat-issues">—</div></div>
-        <div class="stat-card err"><div class="s-label">Needs Action</div><div class="s-val" id="stat-action">—</div></div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="sl">Total Kiosks</div><div class="sv" id="stat-total">—</div></div>
+        <div class="stat-card ok"><div class="sl">Status OK</div><div class="sv" id="stat-ok">—</div></div>
+        <div class="stat-card warn"><div class="sl">Has Issues</div><div class="sv" id="stat-issues">—</div></div>
+        <div class="stat-card err"><div class="sl">Needs Action</div><div class="sv" id="stat-action">—</div></div>
       </div>
-
-      <div class="section-header" style="margin-top:8px;">
-        <h2 style="font-size:16px;">Audit Sheets (Past Sessions)</h2>
-      </div>
-      <div id="audit-sessions">
-        <div class="loading"><div class="spinner"></div> Loading audit history…</div>
-      </div>
+      <div class="section-header"><h2 style="font-size:15px;">Audit Sessions</h2></div>
+      <div id="audit-sessions"><div class="loading"><div class="spinner"></div> Loading…</div></div>
     </div>
   </main>
 </div>
 
-<!-- EDIT KIOSK MODAL -->
-<div class="modal-bg" id="edit-modal">
+<!-- ══ MODAL: ADD KIOSK ══ -->
+<div class="mbg" id="add-modal">
   <div class="modal">
-    <div class="modal-header">
-      <h3 id="edit-modal-title">Edit Kiosk</h3>
-      <button class="modal-close" onclick="closeModal('edit-modal')">×</button>
-    </div>
-    <div class="modal-body">
-      <input type="hidden" id="edit-idx">
-      <div class="form-row">
-        <div class="field"><label>Terminal ID</label><input type="text" id="edit-tid" readonly style="background:#eee;cursor:not-allowed;"></div>
-        <div class="field"><label>Version</label><input type="text" id="edit-version"></div>
-      </div>
-      <div class="form-row">
-        <div class="field"><label>IP Address</label><input type="text" id="edit-ip"></div>
-        <div class="field">
-          <label>Prod / Staging</label>
-          <select id="edit-env">
-            <option>STAGING</option><option>PROD</option>
-          </select>
-        </div>
-      </div>
-      <div class="field"><label>Findings</label><textarea id="edit-findings" placeholder="Describe any issues found…"></textarea></div>
-      <div class="field"><label>Resolution</label><textarea id="edit-resolution" placeholder="Steps taken or recommended…"></textarea></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('edit-modal')">Cancel</button>
-      <button class="btn btn-blue" onclick="saveEdit()">Save Changes</button>
-    </div>
-  </div>
-</div>
-
-<!-- ADD KIOSK MODAL -->
-<div class="modal-bg" id="add-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>Add New Kiosk</h3>
-      <button class="modal-close" onclick="closeModal('add-modal')">×</button>
-    </div>
-    <div class="modal-body">
+    <div class="mhead"><h3>Add New Kiosk</h3><button class="mclose" onclick="closeModal('add-modal')">×</button></div>
+    <div class="mbody">
       <div class="form-row">
         <div class="field"><label>Terminal ID *</label><input type="text" id="add-tid" placeholder="e.g. STG-K20"></div>
         <div class="field"><label>Version</label><input type="text" id="add-version" placeholder="e.g. CASHOUT"></div>
       </div>
       <div class="form-row">
         <div class="field"><label>IP Address *</label><input type="text" id="add-ip" placeholder="169.169.169.xxx"></div>
-        <div class="field">
-          <label>Prod / Staging</label>
+        <div class="field"><label>Environment</label>
           <select id="add-env"><option>STAGING</option><option>PROD</option></select>
         </div>
       </div>
-      <div class="field"><label>Initial Findings</label><textarea id="add-findings" placeholder="Optional…"></textarea></div>
-      <div class="field"><label>Initial Resolution</label><textarea id="add-resolution" placeholder="Optional…"></textarea></div>
+      <div class="field"><label>Findings</label><textarea id="add-findings" placeholder="Optional…"></textarea></div>
+      <div class="field"><label>Resolution</label><textarea id="add-resolution" placeholder="Optional…"></textarea></div>
     </div>
-    <div class="modal-footer">
+    <div class="mfoot">
       <button class="btn btn-outline" onclick="closeModal('add-modal')">Cancel</button>
       <button class="btn btn-blue" onclick="addKiosk()">Add Kiosk</button>
     </div>
   </div>
 </div>
 
-<!-- TOAST -->
+<!-- ══ MODAL: AUDIT SESSION VIEWER ══ -->
+<div class="mbg" id="audit-view-modal">
+  <div class="modal lg">
+    <div class="mhead">
+      <div><h3 id="av-title">Audit Session</h3><div class="msub" id="av-sub"></div></div>
+      <button class="mclose" onclick="closeModal('audit-view-modal')">×</button>
+    </div>
+    <div class="mbody" id="av-body"><div class="loading"><div class="spinner"></div> Loading…</div></div>
+  </div>
+</div>
+
+<!-- ══ MODAL: SETTINGS ══ -->
+<div class="mbg" id="settings-modal">
+  <div class="modal">
+    <div class="mhead"><h3>⚙ Settings</h3><button class="mclose" onclick="closeModal('settings-modal')">×</button></div>
+    <div class="mbody">
+      <div class="field">
+        <label>Apps Script Web App URL</label>
+        <input type="url" id="s-url" placeholder="https://script.google.com/macros/s/…/exec">
+        <div class="url-display" id="s-url-display">Not configured</div>
+      </div>
+      <div class="field">
+        <label>Google Spreadsheet ID</label>
+        <input type="text" id="s-sheetid" placeholder="Paste spreadsheet ID or full URL">
+        <div class="url-display" id="s-sheetid-display">—</div>
+        <span style="font-size:11px;color:var(--text2);">Find the ID in your sheet URL: …/spreadsheets/d/<strong>THIS_PART</strong>/edit</span>
+      </div>
+      <div class="field">
+        <label>Auditors Sheet Name</label>
+        <input type="text" id="s-audsheet" placeholder="e.g. Auditors" value="">
+        <span style="font-size:11px;color:var(--text2);">Name of the sheet tab that lists auditor names (column A)</span>
+      </div>
+      <div class="field">
+        <label>Template Sheet Name</label>
+        <input type="text" id="s-tmplsheet" placeholder="e.g. Template" value="">
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-outline" onclick="closeModal('settings-modal')">Cancel</button>
+      <button class="btn btn-blue" onclick="saveSettings()">Save Settings</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: DATE PICKER ══ -->
+<div class="mbg" id="date-modal">
+  <div class="modal sm">
+    <div class="mhead"><h3>📅 Select Audit Date</h3><button class="mclose" onclick="closeModal('date-modal')">×</button></div>
+    <div class="mbody">
+      <div class="field">
+        <label>Date</label>
+        <input type="date" id="date-picker" class="cal-input">
+      </div>
+      <p style="font-size:12px;color:var(--text2);">The selected date will be used as the audit sheet name when saving.</p>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-outline" onclick="closeModal('date-modal')">Cancel</button>
+      <button class="btn btn-blue" onclick="applyDate()">Apply Date</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: PASTE FALLBACK ══ -->
+<div class="mbg" id="paste-modal">
+  <div class="modal">
+    <div class="mhead">
+      <div><h3>📋 Paste Sheet Data</h3><div class="msub">Auto-load blocked by browser — paste manually</div></div>
+      <button class="mclose" onclick="closeModal('paste-modal')">×</button>
+    </div>
+    <div class="mbody">
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">
+        Open your <a id="sheet-link" href="#" target="_blank" style="color:var(--accent);">Google Sheet → Template tab</a>,
+        press <strong>Ctrl+A</strong> then <strong>Ctrl+C</strong>, and paste below:
+      </p>
+      <div class="field">
+        <label>Paste Cells Here (Tab-separated)</label>
+        <textarea id="paste-csv" style="min-height:120px;font-family:var(--mono);font-size:12px;" placeholder="Paste copied spreadsheet cells…"></textarea>
+      </div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-outline" onclick="closeModal('paste-modal')">Cancel</button>
+      <button class="btn btn-blue" onclick="loadFromPaste()">Load Kiosks</button>
+    </div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
-// ─── CONFIG ───
-const SHEET_ID = '1s0Kr46bF4KYHjdW67BcsECNUAssbiSylkDFUN5nNr1Y';
-const TEMPLATE_SHEET = 'Template';
-// Google Apps Script Web App URL — replace with your deployed URL
-// See README below if needed
-let APPS_SCRIPT_URL = localStorage.getItem('kas_script_url') || '';
+// ══════════════════════════════════════════════
+//  PERSISTENT CONFIG (localStorage)
+// ══════════════════════════════════════════════
+let CFG = {
+  scriptUrl:    localStorage.getItem('kas_scriptUrl')   || '',
+  sheetId:      localStorage.getItem('kas_sheetId')     || '1s0Kr46bF4KYHjdW67BcsECNUAssbiSylkDFUN5nNr1Y',
+  auditorSheet: localStorage.getItem('kas_auditorSheet')|| 'Auditors',
+  templateSheet:localStorage.getItem('kas_tmplSheet')   || 'Template',
+};
+function saveCFG() {
+  localStorage.setItem('kas_scriptUrl',    CFG.scriptUrl);
+  localStorage.setItem('kas_sheetId',      CFG.sheetId);
+  localStorage.setItem('kas_auditorSheet', CFG.auditorSheet);
+  localStorage.setItem('kas_tmplSheet',    CFG.templateSheet);
+}
 
-// ─── STATE ───
+// ══════════════════════════════════════════════
+//  SESSION STATE
+// ══════════════════════════════════════════════
 let auditorName = '';
-let kiosks = []; // { tid, version, ip, env, findings, resolution, audited }
-let editIdx = null;
+let kiosks = [];
 
-// ─── DATE ───
-const today = new Date();
-const dateStr = today.toLocaleDateString('en-PH', { year:'numeric', month:'long', day:'numeric' });
-const dateShort = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-document.getElementById('header-date').textContent = dateStr;
+// Date state — defaults to today
+let activeDate = new Date();
+function fmtDateStr(d)   { return d.toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}); }
+function fmtDateShort(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+let displayDate = fmtDateStr(activeDate);
+let shortDate   = fmtDateShort(activeDate);
 
-// ─── SESSION ───
-function startSession() {
-  const name = document.getElementById('auditor-input').value.trim();
-  if (!name) { showToast('Please enter your name.', 'error-toast'); return; }
+function updateDateDisplay() {
+  displayDate = fmtDateStr(activeDate);
+  shortDate   = fmtDateShort(activeDate);
+  document.getElementById('header-date').textContent = displayDate;
+  document.getElementById('save-bar-date').textContent = displayDate;
+}
+
+document.getElementById('header-date').textContent = displayDate;
+
+// ══════════════════════════════════════════════
+//  AUDITOR PICKER
+// ══════════════════════════════════════════════
+let selectedAuditor = '';
+
+function loadAuditors() {
+  const cbName = 'audCb_' + Date.now();
+  let done = false;
+
+  const timer = setTimeout(function() {
+    if (done) return; done = true; delete window[cbName];
+    showAuditorFallback();
+  }, 7000);
+
+  window[cbName] = function(data) {
+    if (done) return; done = true; clearTimeout(timer); delete window[cbName];
+    try {
+      const rows = data.table.rows;
+      const names = rows
+        .map(r => r.c && r.c[0] && r.c[0].v ? String(r.c[0].v).trim() : '')
+        .filter(n => n.length > 0 && n.toLowerCase() !== 'name' && n.toLowerCase() !== 'auditor');
+      renderAuditorList(names);
+    } catch(e) { showAuditorFallback(); }
+  };
+
+  const s = document.createElement('script');
+  s.onerror = function() { if(done)return; done=true; clearTimeout(timer); showAuditorFallback(); };
+  s.src = 'https://docs.google.com/spreadsheets/d/' + CFG.sheetId +
+          '/gviz/tq?tqx=out:json&callback=' + cbName + '&sheet=' + encodeURIComponent(CFG.auditorSheet);
+  document.head.appendChild(s);
+}
+
+function renderAuditorList(names) {
+  if (!names.length) { showAuditorFallback(); return; }
+  let html = '';
+  names.forEach(function(n) {
+    const init = n.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+    html += '<div class="picker-item" onclick="selectAuditor(\'' + esc(n) + '\',this)">' +
+      '<div class="avatar">' + init + '</div>' +
+      '<span>' + esc(n) + '</span>' +
+      '</div>';
+  });
+  document.getElementById('auditor-list').innerHTML = html;
+}
+
+function showAuditorFallback() {
+  document.getElementById('auditor-list').innerHTML =
+    '<div class="picker-loading" style="color:var(--text2);font-size:12px;">Could not load auditors from sheet.<br>Enter your name manually below.</div>';
+}
+
+function selectAuditor(name, el) {
+  selectedAuditor = name;
+  document.querySelectorAll('.picker-item').forEach(i => i.classList.remove('selected'));
+  if (el) el.classList.add('selected');
+  document.getElementById('manual-name').value = '';
+  document.getElementById('picker-continue').disabled = false;
+}
+
+function selectManual() {
+  const v = document.getElementById('manual-name').value.trim();
+  if (!v) return;
+  selectedAuditor = v;
+  document.querySelectorAll('.picker-item').forEach(i => i.classList.remove('selected'));
+  document.getElementById('picker-continue').disabled = false;
+  showToast('Name set: ' + v, 'success');
+}
+
+document.getElementById('manual-name').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') selectManual();
+});
+
+function continueSession() {
+  if (!selectedAuditor) return;
+  sessionStorage.setItem('kas_auditor', selectedAuditor);
+  applySession(selectedAuditor);
+}
+
+function applySession(name) {
   auditorName = name;
   document.getElementById('auditor-display').textContent = '👤 ' + name;
   document.getElementById('save-bar-auditor').textContent = name;
-  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('save-bar-date').textContent = displayDate;
+  document.getElementById('picker-screen').style.display = 'none';
   document.getElementById('app').classList.add('visible');
+  // Update sheet link in paste modal
+  document.getElementById('sheet-link').href = 'https://docs.google.com/spreadsheets/d/' + CFG.sheetId;
   loadKiosks();
-
-  // Prompt for Apps Script URL if not set
-  if (!APPS_SCRIPT_URL) {
-    setTimeout(() => {
-      const url = prompt(
-        '📋 Google Apps Script URL needed!\n\n' +
-        'To enable saving audits to Google Sheets, paste your deployed Apps Script URL here.\n' +
-        '(See the instructions below the website, or press Cancel to use local-only mode)'
-      );
-      if (url && url.startsWith('https://')) {
-        APPS_SCRIPT_URL = url.trim();
-        localStorage.setItem('kas_script_url', APPS_SCRIPT_URL);
-        showToast('Apps Script URL saved!', 'success');
-      }
-    }, 800);
-  }
 }
 
-// ─── TABS ───
+function switchAuditor() {
+  sessionStorage.removeItem('kas_auditor');
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('picker-screen').style.display = 'flex';
+  selectedAuditor = '';
+  document.querySelectorAll('.picker-item').forEach(i => i.classList.remove('selected'));
+  document.getElementById('manual-name').value = '';
+  document.getElementById('picker-continue').disabled = true;
+  kiosks = [];
+}
+
+// Auto-restore session on refresh
+(function init() {
+  loadAuditors();
+  const saved = sessionStorage.getItem('kas_auditor');
+  if (saved) {
+    selectedAuditor = saved;
+    applySession(saved);
+  }
+})();
+
+// ══════════════════════════════════════════════
+//  DATE PICKER
+// ══════════════════════════════════════════════
+document.getElementById('date-picker').value = fmtDateShort(new Date());
+
+function applyDate() {
+  const v = document.getElementById('date-picker').value;
+  if (!v) return;
+  const parts = v.split('-');
+  activeDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+  updateDateDisplay();
+  closeModal('date-modal');
+  showToast('Audit date set: ' + displayDate, 'success');
+}
+
+// ══════════════════════════════════════════════
+//  SETTINGS
+// ══════════════════════════════════════════════
+function openSettings() {
+  document.getElementById('s-url').value        = CFG.scriptUrl;
+  document.getElementById('s-url-display').textContent    = CFG.scriptUrl || 'Not configured';
+  document.getElementById('s-sheetid').value    = CFG.sheetId;
+  document.getElementById('s-sheetid-display').textContent = CFG.sheetId;
+  document.getElementById('s-audsheet').value   = CFG.auditorSheet;
+  document.getElementById('s-tmplsheet').value  = CFG.templateSheet;
+  openModal('settings-modal');
+}
+
+function saveSettings() {
+  const url    = document.getElementById('s-url').value.trim();
+  let   sheetId = document.getElementById('s-sheetid').value.trim();
+  // Accept full URL or just ID
+  const m = sheetId.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) sheetId = m[1];
+
+  if (url && !url.startsWith('https://')) { showToast('URL must start with https://', 'error-toast'); return; }
+  CFG.scriptUrl     = url;
+  CFG.sheetId       = sheetId || CFG.sheetId;
+  CFG.auditorSheet  = document.getElementById('s-audsheet').value.trim()  || 'Auditors';
+  CFG.templateSheet = document.getElementById('s-tmplsheet').value.trim() || 'Template';
+  saveCFG();
+  document.getElementById('sheet-link').href = 'https://docs.google.com/spreadsheets/d/' + CFG.sheetId;
+  closeModal('settings-modal');
+  showToast('Settings saved ✓', 'success');
+}
+
+// ══════════════════════════════════════════════
+//  TABS
+// ══════════════════════════════════════════════
 function showTab(tab, btn) {
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('tab-kiosks').style.display = tab === 'kiosks' ? '' : 'none';
+  document.getElementById('tab-kiosks').style.display    = tab === 'kiosks'    ? '' : 'none';
   document.getElementById('tab-dashboard').style.display = tab === 'dashboard' ? '' : 'none';
   if (tab === 'dashboard') loadDashboard();
 }
 
-// ─── LOAD KIOSKS via JSONP ───
+// ══════════════════════════════════════════════
+//  LOAD KIOSKS — JSONP with CSV fallback
+// ══════════════════════════════════════════════
 function loadKiosks() {
   document.getElementById('kiosk-list').innerHTML = '<div class="loading"><div class="spinner"></div> Loading kiosks…</div>';
+  const old = document.getElementById('gviz-kiosk-script');
+  if (old) old.remove();
 
-  // Clean up any previous attempt
-  ['gviz-script','gviz-script2'].forEach(id => { const el = document.getElementById(id); if(el) el.remove(); });
-
-  const cbName = 'gvizCb_' + Date.now();
+  const cbName = 'kvizCb_' + Date.now();
   let done = false;
 
-  // Timeout after 8 seconds
   const timer = setTimeout(function() {
-    if (done) return;
-    done = true;
-    delete window[cbName];
-    // Fall back to trying the export CSV URL directly
+    if (done) return; done = true; delete window[cbName];
     tryDirectLoad();
   }, 8000);
 
   window[cbName] = function(data) {
-    if (done) return;
-    done = true;
-    clearTimeout(timer);
-    delete window[cbName];
+    if (done) return; done = true; clearTimeout(timer); delete window[cbName];
     try {
       const rows = data.table.rows;
       kiosks = rows
         .map(r => r.c ? r.c.map(c => (c && c.v != null) ? String(c.v).trim() : '') : [])
         .filter(r => r[0] && r[0].length > 0)
-        .map(r => ({
-          tid:        r[0] || '',
-          version:    r[1] || '',
-          ip:         r[2] || '',
-          env:        r[3] || 'STAGING',
-          findings:   r[4] || '',
-          resolution: r[5] || '',
-          audited:    false
-        }));
-      if (kiosks.length === 0) {
-        document.getElementById('kiosk-list').innerHTML =
-          '<div class="empty"><h3>Sheet loaded but no data found</h3><p>Make sure your <strong>Template</strong> sheet has data starting from row 2, with Terminal ID in column A.</p></div>';
+        .map(r => ({ tid:r[0]||'', version:r[1]||'', ip:r[2]||'', env:r[3]||'STAGING', findings:r[4]||'', resolution:r[5]||'', audited:false }));
+      if (!kiosks.length) {
+        document.getElementById('kiosk-list').innerHTML = '<div class="empty"><h3>No data in template sheet</h3><p>Make sure row 2+ has data with Terminal ID in column A.</p></div>';
         return;
       }
-      renderKiosks();
+      renderTable();
       document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks';
     } catch(e) {
-      document.getElementById('kiosk-list').innerHTML =
-        '<div class="empty"><h3>Could not parse sheet data</h3><p>' + e.message + '</p></div>';
+      document.getElementById('kiosk-list').innerHTML = '<div class="empty"><h3>Parse error</h3><p>' + e.message + '</p></div>';
     }
   };
 
-  const script = document.createElement('script');
-  script.id = 'gviz-script';
-  script.onerror = function() {
-    if (done) return;
-    done = true;
-    clearTimeout(timer);
-    tryDirectLoad();
-  };
-  script.src = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json&callback=' + cbName + '&sheet=' + encodeURIComponent(TEMPLATE_SHEET);
-  document.head.appendChild(script);
+  const s = document.createElement('script');
+  s.id = 'gviz-kiosk-script';
+  s.onerror = function() { if(done)return; done=true; clearTimeout(timer); tryDirectLoad(); };
+  s.src = 'https://docs.google.com/spreadsheets/d/' + CFG.sheetId +
+          '/gviz/tq?tqx=out:json&callback=' + cbName + '&sheet=' + encodeURIComponent(CFG.templateSheet);
+  document.head.appendChild(s);
 }
 
-// Fallback: load via export CSV (works when hosted on a server)
 async function tryDirectLoad() {
   try {
-    const url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/export?format=csv&sheet=' + encodeURIComponent(TEMPLATE_SHEET);
-    const res = await fetch(url, { mode: 'cors' });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const res = await fetch('https://docs.google.com/spreadsheets/d/' + CFG.sheetId +
+      '/export?format=csv&sheet=' + encodeURIComponent(CFG.templateSheet), {mode:'cors'});
+    if (!res.ok) throw new Error('HTTP '+res.status);
     const text = await res.text();
     const rows = parseCSV(text);
-    kiosks = rows.slice(1).filter(r => r[0] && r[0].trim()).map(r => ({
-      tid: (r[0]||'').trim(), version: (r[1]||'').trim(), ip: (r[2]||'').trim(),
-      env: (r[3]||'STAGING').trim(), findings: (r[4]||'').trim(), resolution: (r[5]||'').trim(), audited: false
+    kiosks = rows.slice(1).filter(r=>r[0]&&r[0].trim()).map(r=>({
+      tid:(r[0]||'').trim(), version:(r[1]||'').trim(), ip:(r[2]||'').trim(),
+      env:(r[3]||'STAGING').trim(), findings:(r[4]||'').trim(), resolution:(r[5]||'').trim(), audited:false
     }));
-    if (kiosks.length) { renderKiosks(); document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks'; return; }
+    if (kiosks.length) { renderTable(); document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks'; return; }
   } catch(e) {}
-  // Both methods failed — show manual paste option
   document.getElementById('kiosk-list').innerHTML =
-    '<div class="empty">' +
-    '<h3>⚠️ Browser blocked the Google Sheets request</h3>' +
-    '<p style="margin-top:6px;">This happens when the HTML file is opened directly from your computer (file://).</p>' +
-    '<p style="margin-top:14px;font-weight:600;">Quickest fix — paste your sheet data:</p>' +
-    '<p style="margin-top:6px;font-size:13px;color:#6b6760;">Go to your <a href="https://docs.google.com/spreadsheets/d/' + SHEET_ID + '" target="_blank" style="color:var(--accent)">Google Sheet → Template tab</a>, select all cells (Ctrl+A), copy (Ctrl+C), then paste below:</p>' +
-    '<textarea id="paste-csv" style="width:100%;height:120px;margin-top:10px;padding:10px;border:1.5px solid #d8d5cf;border-radius:6px;font-family:monospace;font-size:12px;" placeholder="Paste copied cells here…"></textarea>' +
-    '<button onclick="loadFromPaste()" style="margin-top:10px;padding:10px 22px;background:#1a6bff;color:#fff;border:none;border-radius:6px;font-size:14px;cursor:pointer;">Load Kiosks from Paste</button>' +
-    '<p style="margin-top:16px;font-size:12px;color:#aaa;">Or upload your HTML to a web server / GitHub Pages for automatic loading.</p>' +
-    '</div>';
-}
-
-// ─── LOAD FROM PASTED SPREADSHEET DATA ───
-function loadFromPaste() {
-  const raw = document.getElementById('paste-csv').value.trim();
-  if (!raw) { alert('Please paste your spreadsheet data first.'); return; }
-  // Parse as TSV (Google Sheets copies as tab-separated)
-  const lines = raw.split('\n').map(l => l.split('\t').map(c => c.trim()));
-  // Auto-detect if first row is header
-  const start = (lines[0][0].toUpperCase().includes('TERMINAL') || lines[0][0].toUpperCase() === 'KIOSK LIST') ? 1 : 0;
-  kiosks = lines.slice(start).filter(r => r[0] && r[0].length > 0).map(r => ({
-    tid:        r[0] || '',
-    version:    r[1] || '',
-    ip:         r[2] || '',
-    env:        r[3] || 'STAGING',
-    findings:   r[4] || '',
-    resolution: r[5] || '',
-    audited:    false
-  }));
-  if (!kiosks.length) { alert('No data found. Make sure you copied from the sheet correctly.'); return; }
-  renderKiosks();
-  document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks';
-  showToast(kiosks.length + ' kiosks loaded from paste ✓', 'success');
+    '<div class="empty"><h3>⚠️ Could not auto-load</h3>' +
+    '<p>Browser is blocking Google Sheets (CORS). Host on GitHub Pages for auto-loading, or paste manually.</p><br>' +
+    '<button class="btn btn-blue" onclick="openModal(\'paste-modal\')">📋 Paste Sheet Data</button></div>';
 }
 
 function parseCSV(text) {
-  const rows = [];
-  let row = [], cur = '', inQ = false;
-  for (let i = 0; i < text.length; i++) {
-    const c = text[i], n = text[i+1];
-    if (inQ) {
-      if (c === '"' && n === '"') { cur += '"'; i++; }
-      else if (c === '"') inQ = false;
-      else cur += c;
-    } else {
-      if (c === '"') inQ = true;
-      else if (c === ',') { row.push(cur); cur = ''; }
-      else if (c === '\n' || (c === '\r' && n === '\n')) {
-        row.push(cur); rows.push(row); row = []; cur = '';
-        if (c === '\r') i++;
-      } else cur += c;
-    }
+  const rows=[]; let row=[],cur='',inQ=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i],n=text[i+1];
+    if(inQ){if(c==='"'&&n==='"'){cur+='"';i++;}else if(c==='"')inQ=false;else cur+=c;}
+    else{if(c==='"')inQ=true;else if(c===','){row.push(cur);cur='';}
+    else if(c==='\n'||(c==='\r'&&n==='\n')){row.push(cur);rows.push(row);row=[];cur='';if(c==='\r')i++;}else cur+=c;}
   }
-  if (cur || row.length) { row.push(cur); rows.push(row); }
+  if(cur||row.length){row.push(cur);rows.push(row);}
   return rows;
 }
 
-// ─── RENDER KIOSK CARDS ───
-function renderKiosks() {
+function loadFromPaste() {
+  const raw = document.getElementById('paste-csv').value.trim();
+  if (!raw) { showToast('Please paste data first.','error-toast'); return; }
+  const lines = raw.split('\n').map(l => l.split('\t').map(c => c.trim()));
+  const start = (lines[0][0].toUpperCase().includes('TERMINAL')||lines[0][0].toUpperCase().includes('KIOSK')) ? 1 : 0;
+  kiosks = lines.slice(start).filter(r=>r[0]&&r[0].length>0).map(r=>({
+    tid:r[0]||'',version:r[1]||'',ip:r[2]||'',env:r[3]||'STAGING',findings:r[4]||'',resolution:r[5]||'',audited:false
+  }));
+  if (!kiosks.length) { showToast('No data found.','error-toast'); return; }
+  document.getElementById('paste-csv').value = '';
+  closeModal('paste-modal');
+  renderTable();
+  document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks';
+  showToast(kiosks.length + ' kiosks loaded ✓','success');
+}
+
+// ══════════════════════════════════════════════
+//  RENDER TABLE (inline editable)
+// ══════════════════════════════════════════════
+function getStatus(k) {
+  const fl = k.findings.toLowerCase();
+  if (!k.findings || k.findings.toUpperCase()==='OK') return 'ok';
+  if (fl.includes('offline')||fl.includes('maintenance')||fl.includes('error')||fl.includes('black screen')) return 'action';
+  return 'issue';
+}
+
+function statusBadge(k) {
+  const s = getStatus(k);
+  if (s==='ok')     return '<span class="badge badge-ok">OK</span>';
+  if (s==='action') return '<span class="badge badge-error">Action</span>';
+  return '<span class="badge badge-warn">Issue</span>';
+}
+
+function renderTable() {
   if (!kiosks.length) {
-    document.getElementById('kiosk-list').innerHTML = '<div class="empty"><h3>No kiosks found</h3><p>Add a kiosk using the button above.</p></div>';
+    document.getElementById('kiosk-list').innerHTML = '<div class="empty"><h3>No kiosks</h3><p>Add one above.</p></div>';
     return;
   }
-  let html = '<div class="kiosk-grid">';
-  kiosks.forEach(function(k, i) { html += kioskCard(k, i); });
-  html += '</div>';
+  let html = '<div class="kiosk-table-wrap"><table class="kiosk-table"><thead><tr>' +
+    '<th>Terminal ID</th><th>Version</th><th>IP Address</th><th>Env</th>' +
+    '<th style="min-width:160px">Findings</th><th style="min-width:160px">Resolution</th>' +
+    '<th style="text-align:center">Audited</th><th>Status</th><th>Remove</th></tr></thead><tbody>';
+
+  kiosks.forEach(function(k,i) {
+    const adot = k.audited
+      ? '<span class="adot done" title="Audited"></span>'
+      : '<span class="adot none" title="Not yet audited"></span>';
+
+    html += '<tr id="krow-'+i+'">' +
+      '<td class="td-tid">' + esc(k.tid) + '</td>' +
+      '<td class="td-edit"><input class="iinput" value="' + esc(k.version) + '" placeholder="—"' +
+        ' onchange="kiosks['+i+'].version=this.value.trim()"' +
+        ' onfocus="kiosks['+i+'].audited=true"></td>' +
+      '<td class="td-edit"><input class="iinput" value="' + esc(k.ip) + '" placeholder="—"' +
+        ' style="font-family:var(--mono);font-size:12px;"' +
+        ' onchange="kiosks['+i+'].ip=this.value.trim()"' +
+        ' onfocus="kiosks['+i+'].audited=true"></td>' +
+      '<td><select class="iselect" onchange="kiosks['+i+'].env=this.value;kiosks['+i+'].audited=true;renderTable()">' +
+        '<option'+(k.env==='STAGING'?' selected':'')+'>STAGING</option>' +
+        '<option'+(k.env==='PROD'?' selected':'')+'>PROD</option>' +
+      '</select></td>' +
+      '<td class="td-edit"><input class="iinput" value="' + esc(k.findings) + '" placeholder="e.g. OK"' +
+        ' onchange="kiosks['+i+'].findings=this.value.trim();renderTable()"' +
+        ' onfocus="kiosks['+i+'].audited=true"></td>' +
+      '<td class="td-edit"><input class="iinput" value="' + esc(k.resolution) + '" placeholder="—"' +
+        ' onchange="kiosks['+i+'].resolution=this.value.trim()"' +
+        ' onfocus="kiosks['+i+'].audited=true"></td>' +
+      '<td class="td-center">' + adot + '</td>' +
+      '<td>' + statusBadge(k) + '</td>' +
+      '<td><button class="btn btn-danger btn-sm" onclick="confirmRemove(' + i + ')">✕</button></td>' +
+      '</tr>';
+  });
+  html += '</tbody></table></div>';
   document.getElementById('kiosk-list').innerHTML = html;
 }
 
-function kioskCard(k, i) {
-  const f = k.findings.toLowerCase();
-  let statusBadge = '', statusClass = 'none';
-  if (!k.findings || k.findings === 'OK') {
-    statusBadge = '<span class="badge badge-ok">OK</span>';
-    statusClass = 'ok';
-  } else if (f.includes('offline') || f.includes('maintenance') || f.includes('error')) {
-    statusBadge = '<span class="badge badge-error">Action</span>';
-    statusClass = 'pending';
-  } else {
-    statusBadge = '<span class="badge badge-warn">Issue</span>';
-    statusClass = 'pending';
-  }
-
-  const auditDot = k.audited
-    ? '<span class="audit-dot"></span> Audited today'
-    : '<span class="audit-dot none"></span> Not yet audited';
-
-  const findingsHtml = k.findings
-    ? `<div class="k-findings"><div class="f-label">Findings</div><div class="f-text">${esc(k.findings)}</div></div>`
-    : '';
-
-  return `
-    <div class="kiosk-card" onclick="openEditModal(${i})">
-      <div class="k-status">${statusBadge}</div>
-      <div class="k-id">${esc(k.tid)}</div>
-      <div class="k-meta">
-        <div class="k-row"><span>Version</span><span class="val">${k.version || '—'}</span></div>
-        <div class="k-row"><span>IP</span><span class="val" style="font-family:var(--mono);font-size:12px;">${esc(k.ip)}</span></div>
-        <div class="k-row"><span>Env</span><span class="badge ${k.env==='PROD'?'badge-prod':'badge-staging'}">${esc(k.env)}</span></div>
-        ${k.resolution ? `<div class="k-row"><span>Fix</span><span class="val">${esc(k.resolution.substring(0,40))}${k.resolution.length>40?'…':''}</span></div>` : ''}
-      </div>
-      ${findingsHtml}
-      <div class="k-audit">${auditDot}</div>
-    </div>`;
+// ── Remove kiosk with inline confirm ──
+function confirmRemove(i) {
+  // replace row button with confirm prompt
+  const cell = document.querySelector('#krow-'+i+' td:last-child');
+  if (!cell) return;
+  cell.innerHTML = '<div class="confirm-row">' +
+    '<span>Remove <strong>' + esc(kiosks[i].tid) + '</strong>?</span>' +
+    '<button class="btn btn-danger btn-sm" onclick="removeKiosk('+i+')">Yes</button>' +
+    '<button class="btn btn-outline btn-sm" onclick="renderTable()">No</button>' +
+    '</div>';
 }
 
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-// ─── EDIT MODAL ───
-function openEditModal(i) {
-  editIdx = i;
-  const k = kiosks[i];
-  document.getElementById('edit-modal-title').textContent = 'Edit — ' + k.tid;
-  document.getElementById('edit-idx').value = i;
-  document.getElementById('edit-tid').value = k.tid;
-  document.getElementById('edit-version').value = k.version;
-  document.getElementById('edit-ip').value = k.ip;
-  document.getElementById('edit-env').value = k.env;
-  document.getElementById('edit-findings').value = k.findings;
-  document.getElementById('edit-resolution').value = k.resolution;
-  openModal('edit-modal');
+function removeKiosk(i) {
+  const tid = kiosks[i].tid;
+  kiosks.splice(i, 1);
+  renderTable();
+  document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks';
+  showToast(tid + ' removed', 'success');
 }
 
-function saveEdit() {
-  const i = parseInt(document.getElementById('edit-idx').value);
-  kiosks[i].version    = document.getElementById('edit-version').value.trim();
-  kiosks[i].ip         = document.getElementById('edit-ip').value.trim();
-  kiosks[i].env        = document.getElementById('edit-env').value;
-  kiosks[i].findings   = document.getElementById('edit-findings').value.trim();
-  kiosks[i].resolution = document.getElementById('edit-resolution').value.trim();
-  kiosks[i].audited    = true;
-  closeModal('edit-modal');
-  renderKiosks();
-  showToast('Kiosk updated ✓', 'success');
-}
-
-// ─── ADD KIOSK ───
-function openAddModal() { openModal('add-modal'); }
+// ══════════════════════════════════════════════
+//  ADD KIOSK
+// ══════════════════════════════════════════════
 function addKiosk() {
   const tid = document.getElementById('add-tid').value.trim();
   const ip  = document.getElementById('add-ip').value.trim();
-  if (!tid || !ip) { showToast('Terminal ID and IP are required.', 'error-toast'); return; }
+  if (!tid||!ip) { showToast('Terminal ID and IP are required.','error-toast'); return; }
   kiosks.push({
     tid, version: document.getElementById('add-version').value.trim(),
     ip,  env: document.getElementById('add-env').value,
@@ -634,166 +765,234 @@ function addKiosk() {
     resolution: document.getElementById('add-resolution').value.trim(),
     audited: true
   });
-  ['add-tid','add-version','add-ip','add-findings','add-resolution'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('add-env').value = 'STAGING';
+  ['add-tid','add-version','add-ip','add-findings','add-resolution'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('add-env').value='STAGING';
   closeModal('add-modal');
-  renderKiosks();
+  renderTable();
   document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks';
-  showToast('Kiosk added ✓', 'success');
+  showToast('Kiosk added ✓','success');
 }
 
-// ─── SAVE AUDIT TO GOOGLE SHEETS ───
+// ══════════════════════════════════════════════
+//  SAVE AUDIT
+// ══════════════════════════════════════════════
 async function saveAudit() {
-  if (!APPS_SCRIPT_URL) {
-    const url = prompt('Enter your Google Apps Script Web App URL to enable saving:');
-    if (!url) return;
-    APPS_SCRIPT_URL = url.trim();
-    localStorage.setItem('kas_script_url', APPS_SCRIPT_URL);
-  }
-
-  const sheetName = `${dateShort} - ${auditorName}`;
+  if (!CFG.scriptUrl) { openSettings(); showToast('Set your Apps Script URL first.','error-toast'); return; }
+  const sheetName = shortDate + ' - ' + auditorName;
   const payload = {
-    action: 'saveAudit',
-    sheetName,
-    auditor: auditorName,
-    date: dateStr,
-    kiosks: kiosks.map(k => [k.tid, k.version, k.ip, k.env, k.findings, k.resolution])
+    action:'saveAudit', sheetName, auditor:auditorName, date:displayDate,
+    kiosks: kiosks.map(k=>[k.tid,k.version,k.ip,k.env,k.findings,k.resolution])
   };
-
   showToast('Saving audit…');
   try {
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
+    const res  = await fetch(CFG.scriptUrl, {method:'POST',body:JSON.stringify(payload)});
     const data = await res.json();
     if (data.success) {
-      showToast('Audit saved to Google Sheets ✓', 'success');
-      kiosks.forEach(k => k.audited = true);
-      renderKiosks();
+      showToast('Audit saved ✓','success');
+      kiosks.forEach(k=>k.audited=true);
+      renderTable();
     } else {
-      showToast('Error: ' + (data.error||'Unknown error'), 'error-toast');
+      showToast('Error: '+(data.error||'Unknown'),'error-toast');
     }
   } catch(e) {
-    showToast('Network error — check Apps Script URL', 'error-toast');
+    showToast('Network error — check Apps Script URL','error-toast');
   }
 }
 
-// ─── DASHBOARD ───
+// ══════════════════════════════════════════════
+//  DASHBOARD
+// ══════════════════════════════════════════════
 async function loadDashboard() {
-  const ok    = kiosks.filter(k => !k.findings || k.findings === 'OK').length;
-  const issues = kiosks.filter(k => k.findings && k.findings !== 'OK').length;
-  const action = kiosks.filter(k => {
-    const f = k.findings.toLowerCase();
-    return f.includes('offline') || f.includes('maintenance') || f.includes('error');
-  }).length;
-  document.getElementById('stat-total').textContent = kiosks.length;
-  document.getElementById('stat-ok').textContent = ok;
+  const ok     = kiosks.filter(k=>!k.findings||k.findings.toUpperCase()==='OK').length;
+  const issues = kiosks.filter(k=>k.findings&&k.findings.toUpperCase()!=='OK').length;
+  const action = kiosks.filter(k=>{ const f=k.findings.toLowerCase(); return f.includes('offline')||f.includes('maintenance')||f.includes('error')||f.includes('black screen'); }).length;
+  document.getElementById('stat-total').textContent  = kiosks.length;
+  document.getElementById('stat-ok').textContent     = ok;
   document.getElementById('stat-issues').textContent = issues;
   document.getElementById('stat-action').textContent = action;
 
-  // Load sheet list
   document.getElementById('audit-sessions').innerHTML = '<div class="loading"><div class="spinner"></div> Loading…</div>';
-  if (!APPS_SCRIPT_URL) {
-    document.getElementById('audit-sessions').innerHTML = '<div class="empty"><h3>Apps Script not configured</h3><p>Save your first audit to enable sheet history.</p></div>';
+  if (!CFG.scriptUrl) {
+    document.getElementById('audit-sessions').innerHTML = '<div class="empty"><h3>Apps Script not configured</h3><p>Go to ⚙ Settings to add your URL.</p></div>';
     return;
   }
   try {
-    const res = await fetch(APPS_SCRIPT_URL + '?action=listSheets');
+    const res  = await fetch(CFG.scriptUrl + '?action=listSheets');
     const data = await res.json();
-    if (data.sheets && data.sheets.length) {
-      const rows = data.sheets.filter(s => s !== TEMPLATE_SHEET && s !== 'Sheet2').map(s =>
-        `<tr><td class="td-id">${esc(s)}</td><td><a href="https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit#gid=0" target="_blank" style="color:var(--accent);font-size:13px;">Open ↗</a></td></tr>`
-      ).join('');
-      document.getElementById('audit-sessions').innerHTML = `
-        <div class="audit-history">
-          <table>
-            <thead><tr><th>Sheet / Audit Session</th><th>Action</th></tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>`;
+    const sessions = (data.sheets||[]).filter(s=>s!==CFG.templateSheet&&s!=='Sheet2'&&s!=='Sheet1'&&s!==CFG.auditorSheet);
+    if (sessions.length) {
+      // Sort newest first
+      sessions.sort((a,b)=>b.localeCompare(a));
+      // Highlight today's sessions
+      const rows = sessions.map(s => {
+        const isToday = s.startsWith(shortDate);
+        return '<tr>' +
+          '<td style="font-family:var(--mono);font-weight:600;">' + esc(s) +
+          (isToday?' <span class="badge badge-ok" style="font-size:9px;">TODAY</span>':'') + '</td>' +
+          '<td style="display:flex;gap:6px;align-items:center;">' +
+            '<button class="btn btn-outline btn-sm" onclick="openAuditView(\'' + esc(s) + '\')">👁 View</button>' +
+            '<a href="https://docs.google.com/spreadsheets/d/'+CFG.sheetId+'" target="_blank" class="btn btn-outline btn-sm" style="text-decoration:none;">↗ Sheet</a>' +
+          '</td></tr>';
+      }).join('');
+      document.getElementById('audit-sessions').innerHTML =
+        '<div class="sessions-wrap"><table><thead><tr><th>Session</th><th>Actions</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
     } else {
       document.getElementById('audit-sessions').innerHTML = '<div class="empty"><h3>No audit sessions yet</h3><p>Save your first audit to see history here.</p></div>';
     }
   } catch(e) {
-    document.getElementById('audit-sessions').innerHTML = '<div class="empty"><h3>Could not load sessions</h3><p>Check your Apps Script URL.</p></div>';
+    document.getElementById('audit-sessions').innerHTML = '<div class="empty"><h3>Could not load sessions</h3><p>Check your Apps Script URL in ⚙ Settings.</p></div>';
   }
 }
 
-// ─── MODAL HELPERS ───
-function openModal(id) { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); }));
-document.getElementById('auditor-input').addEventListener('keydown', e => { if(e.key==='Enter') startSession(); });
+// ══════════════════════════════════════════════
+//  AUDIT SESSION VIEWER (JSONP into modal)
+// ══════════════════════════════════════════════
+function openAuditView(sheetName) {
+  document.getElementById('av-title').textContent = sheetName;
+  document.getElementById('av-sub').textContent   = 'Loading…';
+  document.getElementById('av-body').innerHTML    = '<div class="loading"><div class="spinner"></div> Fetching audit data…</div>';
+  openModal('audit-view-modal');
 
-// ─── TOAST ───
-let toastTimer;
-function showToast(msg, cls='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'show ' + cls;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.className = '', 3000);
+  const cbName = 'avCb_' + Date.now();
+  let done = false;
+  const timer = setTimeout(function() {
+    if(done)return; done=true; delete window[cbName];
+    document.getElementById('av-body').innerHTML='<div class="empty"><h3>Timed out</h3><p>Could not load this session.</p></div>';
+  }, 10000);
+
+  window[cbName] = function(data) {
+    if(done)return; done=true; clearTimeout(timer); delete window[cbName];
+    try {
+      const rows = data.table.rows;
+      if (!rows||!rows.length) { document.getElementById('av-body').innerHTML='<div class="empty"><h3>No data</h3></div>'; return; }
+      const all = rows.map(r=>r.c?r.c.map(c=>(c&&c.v!=null)?String(c.v).trim():''):[]);
+
+      let auditor='',date='',dataStart=0;
+      for(let i=0;i<Math.min(4,all.length);i++){
+        if(all[i][0]&&all[i][0].startsWith('Auditor:')){
+          auditor=all[i][0].replace('Auditor:','').trim();
+          date=(all[i][4]||'').replace('Date:','').trim();
+          dataStart=i+1; break;
+        }
+        if(all[i][0]&&all[i][0].toUpperCase().includes('TERMINAL')) dataStart=i+1;
+      }
+      const data2 = all.slice(dataStart).filter(r=>r[0]);
+      document.getElementById('av-sub').textContent =
+        (auditor?'Auditor: '+auditor:'')+(date?' · '+date:'');
+
+      let html='';
+      if(auditor||date){
+        html+='<div class="audit-meta">';
+        if(auditor) html+='<span>Auditor: <strong>'+esc(auditor)+'</strong></span>';
+        if(date)    html+='<span>Date: <strong>'+esc(date)+'</strong></span>';
+        html+='<span>Kiosks: <strong>'+data2.length+'</strong></span></div>';
+      }
+
+      // Summary counts
+      const okC  = data2.filter(r=>!r[4]||r[4].toUpperCase()==='OK').length;
+      const issC = data2.filter(r=>r[4]&&r[4].toUpperCase()!=='OK').length;
+      html += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 10px;">' +
+        '<span class="badge badge-ok" style="font-size:12px;padding:4px 12px;">OK: '+okC+'</span>' +
+        '<span class="badge badge-warn" style="font-size:12px;padding:4px 12px;">Issues: '+issC+'</span>' +
+        '</div>';
+
+      html+='<div style="overflow:auto;"><table class="avt"><thead><tr>'+
+        '<th>Terminal ID</th><th>Version</th><th>IP</th><th>Env</th><th>Findings</th><th>Resolution</th>'+
+        '</tr></thead><tbody>';
+      data2.forEach(function(r){
+        const fl=(r[4]||'').toLowerCase();
+        let b;
+        if(!r[4]||r[4].toUpperCase()==='OK') b='<span class="badge badge-ok">OK</span>';
+        else if(fl.includes('offline')||fl.includes('maintenance')||fl.includes('error')||fl.includes('black screen')) b='<span class="badge badge-error">Action</span>';
+        else b='<span class="badge badge-warn">Issue</span>';
+        html+='<tr>'+
+          '<td style="font-family:var(--mono);font-weight:600;white-space:nowrap;">'+esc(r[0])+'</td>'+
+          '<td>'+esc(r[1])+'</td>'+
+          '<td style="font-family:var(--mono);font-size:12px;">'+esc(r[2])+'</td>'+
+          '<td>'+(r[3]==='PROD'?'<span class="badge badge-prod">PROD</span>':'<span class="badge badge-staging">STAGING</span>')+'</td>'+
+          '<td>'+b+(r[4]&&r[4].toUpperCase()!=='OK'?' '+esc(r[4]):'')+'</td>'+
+          '<td style="color:var(--text2);">'+esc(r[5])+'</td>'+
+          '</tr>';
+      });
+      html+='</tbody></table></div>';
+      document.getElementById('av-body').innerHTML=html;
+    } catch(e){
+      document.getElementById('av-body').innerHTML='<div class="empty"><h3>Error</h3><p>'+e.message+'</p></div>';
+    }
+  };
+
+  const s=document.createElement('script');
+  s.onerror=function(){if(done)return;done=true;clearTimeout(timer);document.getElementById('av-body').innerHTML='<div class="empty"><h3>Could not load</h3></div>';};
+  s.src='https://docs.google.com/spreadsheets/d/'+CFG.sheetId+'/gviz/tq?tqx=out:json&callback='+cbName+'&sheet='+encodeURIComponent(sheetName);
+  document.head.appendChild(s);
 }
 
+// ══════════════════════════════════════════════
+//  MODAL HELPERS
+// ══════════════════════════════════════════════
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.mbg').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+let _tt;
+function showToast(msg,cls){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='show '+(cls||'');
+  clearTimeout(_tt); _tt=setTimeout(()=>t.className='',3200);
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>
 
-<!-- ═══════════════════════════════════════════════════════════════════
-     GOOGLE APPS SCRIPT SETUP INSTRUCTIONS
-     ═══════════════════════════════════════════════════════════════════
-     
-  To enable saving audits to Google Sheets, follow these steps:
-  
-  1. Open your Google Sheet:
-     https://docs.google.com/spreadsheets/d/1s0Kr46bF4KYHjdW67BcsECNUAssbiSylkDFUN5nNr1Y
-  
-  2. Go to Extensions > Apps Script
-  
-  3. Paste this script:
+<!--
+═══════════════════════════════════════════════════════════
+GOOGLE APPS SCRIPT — Extensions > Apps Script > paste this
+Then Deploy > New Deployment > Web App > Anyone > Me
+═══════════════════════════════════════════════════════════
 
-  ──────────────────────────────────────────────────────────────────────
-  function doGet(e) {
-    const params = e.parameter;
-    if (params.action === 'listSheets') {
-      const ss = SpreadsheetApp.openById('1s0Kr46bF4KYHjdW67BcsECNUAssbiSylkDFUN5nNr1Y');
-      const sheets = ss.getSheets().map(s => s.getName());
-      return ContentService.createTextOutput(JSON.stringify({sheets}))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    return ContentService.createTextOutput(JSON.stringify({ok:true}))
-      .setMimeType(ContentService.MimeType.JSON);
+function doGet(e) {
+  const p = e.parameter;
+  const ss = SpreadsheetApp.openById(getSheetId());
+  if (p.action === 'listSheets') {
+    return out({ sheets: ss.getSheets().map(s => s.getName()) });
   }
+  return out({ ok: true });
+}
 
-  function doPost(e) {
-    try {
-      const payload = JSON.parse(e.postData.contents);
-      if (payload.action === 'saveAudit') {
-        const ss = SpreadsheetApp.openById('1s0Kr46bF4KYHjdW67BcsECNUAssbiSylkDFUN5nNr1Y');
-        let sheet = ss.getSheetByName(payload.sheetName);
-        if (!sheet) sheet = ss.insertSheet(payload.sheetName);
-        else sheet.clearContents();
-        sheet.appendRow(['Kiosk List (TERMINAL ID)', 'VERSION', 'IP', 'PROD/STAGING', 'Findings', 'Resolution']);
-        sheet.appendRow(['Auditor: ' + payload.auditor, '', '', '', 'Date: ' + payload.date]);
-        payload.kiosks.forEach(row => sheet.appendRow(row));
-        return ContentService.createTextOutput(JSON.stringify({success:true}))
-          .setMimeType(ContentService.MimeType.JSON);
-      }
-    } catch(err) {
-      return ContentService.createTextOutput(JSON.stringify({success:false, error: err.message}))
-        .setMimeType(ContentService.MimeType.JSON);
+function doPost(e) {
+  try {
+    const d = JSON.parse(e.postData.contents);
+    if (d.action === 'saveAudit') {
+      const ss = SpreadsheetApp.openById(getSheetId());
+      let sh = ss.getSheetByName(d.sheetName);
+      if (!sh) sh = ss.insertSheet(d.sheetName);
+      else sh.clearContents();
+      sh.appendRow(['Kiosk List (TERMINAL ID)','VERSION','IP','PROD/STAGING','Findings','Resolution']);
+      sh.appendRow(['Auditor: '+d.auditor,'','','','Date: '+d.date,'']);
+      d.kiosks.forEach(row => sh.appendRow(row));
+      return out({ success: true });
     }
+  } catch(err) {
+    return out({ success: false, error: err.message });
   }
-  ──────────────────────────────────────────────────────────────────────
+}
 
-  4. Click Deploy > New Deployment
-     - Type: Web App
-     - Execute as: Me
-     - Who has access: Anyone
-  
-  5. Copy the Web App URL and paste it when prompted by the app.
-  
-  NOTE: The Template sheet must be shared as "Anyone with the link can view"
-  for the kiosk list to load automatically.
-═══════════════════════════════════════════════════════════════════ -->
+function getSheetId() {
+  // Replace with your Sheet ID, or make it dynamic via PropertiesService
+  return '1s0Kr46bF4KYHjdW67BcsECNUAssbiSylkDFUN5nNr1Y';
+}
+
+function out(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+ALSO: Add an "Auditors" sheet tab in your Google Sheet
+with auditor names in column A (one per row, starting row 1).
+═══════════════════════════════════════════════════════════
+-->
 </body>
 </html>
