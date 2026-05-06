@@ -15,58 +15,66 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;}
 
-/* ── AUDITOR PICKER SCREEN ── */
-#picker-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:0;}
-.picker-box{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;padding:44px 40px;width:440px;max-width:95vw;box-shadow:0 6px 32px rgba(0,0,0,.08);}
-.picker-logo{font-family:var(--mono);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text2);margin-bottom:26px;}
-.picker-box h1{font-size:24px;font-weight:600;margin-bottom:6px;}
-.picker-box p{color:var(--text2);font-size:14px;margin-bottom:28px;}
-.picker-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;max-height:260px;overflow-y:auto;}
-.picker-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:border-color .15s,background .15s;font-size:14px;}
+/* ══ SETUP / PICKER SCREEN ══ */
+#setup-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;}
+.setup-box{background:var(--surface);border:1.5px solid var(--border);border-radius:12px;width:460px;max-width:100%;box-shadow:0 6px 32px rgba(0,0,0,.08);overflow:hidden;}
+.setup-step{display:none;padding:40px;}
+.setup-step.active{display:block;}
+.setup-logo{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--text2);margin-bottom:22px;}
+.setup-box h1{font-size:22px;font-weight:600;margin-bottom:5px;}
+.setup-box h2{font-size:18px;font-weight:600;margin-bottom:5px;}
+.setup-box .sub{color:var(--text2);font-size:13px;margin-bottom:26px;line-height:1.6;}
+.step-indicator{display:flex;gap:6px;margin-bottom:28px;}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:background .2s;}
+.step-dot.active{background:var(--accent);}
+.step-dot.done{background:var(--ok);}
+
+/* Auditor picker */
+.picker-list{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;max-height:240px;overflow-y:auto;}
+.picker-item{display:flex;align-items:center;gap:12px;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:border-color .15s,background .15s;font-size:14px;}
 .picker-item:hover{border-color:var(--accent);background:#f0f5ff;}
 .picker-item.selected{border-color:var(--accent);background:#eef3ff;}
-.picker-item .avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;font-weight:600;flex-shrink:0;}
-.picker-divider{display:flex;align-items:center;gap:10px;color:var(--text2);font-size:12px;margin:4px 0;}
-.picker-divider::before,.picker-divider::after{content:'';flex:1;height:1px;background:var(--border);}
-.picker-manual{display:flex;gap:8px;margin-bottom:4px;}
-.picker-manual input{flex:1;padding:9px 13px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:14px;background:var(--bg);color:var(--text);outline:none;transition:border .2s;}
-.picker-manual input:focus{border-color:var(--accent);}
-.picker-loading{text-align:center;padding:20px;color:var(--text2);font-size:13px;font-family:var(--mono);}
+.picker-item .avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:12px;font-weight:600;flex-shrink:0;}
+.divider{display:flex;align-items:center;gap:10px;color:var(--text2);font-size:12px;margin:8px 0;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.manual-row{display:flex;gap:8px;margin-bottom:6px;}
+.manual-row input{flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:14px;background:var(--bg);color:var(--text);outline:none;transition:border .2s;}
+.manual-row input:focus{border-color:var(--accent);}
+.picker-loading{padding:18px;text-align:center;color:var(--text2);font-size:13px;font-family:var(--mono);}
 
-/* ── APP SHELL ── */
+/* ══ APP SHELL ══ */
 #app{display:none;flex-direction:column;min-height:100vh;}
 #app.visible{display:flex;}
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;background:var(--text);color:#fff;position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap;}
+header{display:flex;align-items:center;justify-content:space-between;padding:12px 26px;background:var(--text);color:#fff;position:sticky;top:0;z-index:100;gap:10px;flex-wrap:wrap;}
 .header-left{display:flex;align-items:center;gap:12px;}
-.header-logo{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#666;}
+.header-logo{font-family:var(--mono);font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#555;}
 .header-title{font-size:14px;font-weight:500;}
 .header-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-.hpill{background:#2d2c2a;padding:5px 12px;border-radius:20px;font-size:12px;color:#ccc;font-family:var(--mono);}
+.hpill{background:#2d2c2a;padding:5px 13px;border-radius:20px;font-size:12px;color:#ccc;font-family:var(--mono);}
 .hdate{font-family:var(--mono);font-size:11px;color:#666;}
-.hbtn{background:#2d2c2a;border:none;padding:5px 12px;border-radius:20px;font-size:11px;color:#bbb;cursor:pointer;font-family:var(--mono);transition:background .2s;white-space:nowrap;}
+.hbtn{background:#2d2c2a;border:none;padding:5px 13px;border-radius:20px;font-size:11px;color:#bbb;cursor:pointer;font-family:var(--mono);transition:background .2s;white-space:nowrap;}
 .hbtn:hover{background:#555;}
-.hbtn.warn:hover{background:#b45309;color:#fff;}
 
-nav{display:flex;background:var(--surface);border-bottom:1.5px solid var(--border);padding:0 24px;}
-nav button{background:none;border:none;border-bottom:2.5px solid transparent;padding:12px 16px;font-family:var(--sans);font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:color .15s,border-color .15s;margin-bottom:-1.5px;}
+nav{display:flex;background:var(--surface);border-bottom:1.5px solid var(--border);padding:0 26px;}
+nav button{background:none;border:none;border-bottom:2.5px solid transparent;padding:13px 18px;font-family:var(--sans);font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;transition:color .15s,border-color .15s;margin-bottom:-1.5px;}
 nav button.active{color:var(--accent);border-bottom-color:var(--accent);}
 nav button:hover:not(.active){color:var(--text);}
 
-main{flex:1;padding:24px;max-width:1360px;margin:0 auto;width:100%;}
+main{flex:1;padding:26px;max-width:1320px;margin:0 auto;width:100%;}
 
-/* ── FIELDS ── */
+/* ══ FORM FIELDS ══ */
 .field{display:flex;flex-direction:column;gap:5px;}
 .field label{font-size:11px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:var(--text2);}
 .field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:14px;background:var(--bg);color:var(--text);outline:none;transition:border .2s;resize:vertical;}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);}
 .field textarea{min-height:68px;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
 
-/* ── BUTTONS ── */
+/* ══ BUTTONS ══ */
 .btn{padding:8px 16px;border-radius:var(--r);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid transparent;transition:all .15s;}
-.btn-primary{width:100%;padding:12px;background:var(--text);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:500;cursor:pointer;margin-top:16px;transition:background .2s;font-family:var(--sans);}
+.btn-primary{width:100%;padding:12px;background:var(--text);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:500;cursor:pointer;margin-top:14px;transition:background .2s;font-family:var(--sans);}
 .btn-primary:hover{background:var(--accent);}
+.btn-primary:disabled{background:#aaa;cursor:not-allowed;}
 .btn-blue{background:var(--accent);color:#fff;border-color:var(--accent);}
 .btn-blue:hover{background:#0052d9;}
 .btn-outline{background:var(--surface);color:var(--text);border-color:var(--border);}
@@ -74,42 +82,46 @@ main{flex:1;padding:24px;max-width:1360px;margin:0 auto;width:100%;}
 .btn-danger{background:#fee2e2;color:var(--error);border-color:#fca5a5;}
 .btn-danger:hover{background:var(--error);color:#fff;}
 .btn-sm{padding:4px 11px;font-size:12px;}
+.btn-link{background:none;border:none;color:var(--accent);font-size:13px;cursor:pointer;font-family:var(--sans);padding:0;text-decoration:underline;}
 
-/* ── SAVE BAR ── */
-.save-bar{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:10px;flex-wrap:wrap;}
-.save-bar-meta p{font-size:14px;line-height:1.5;}
+/* ══ SAVE BAR ══ */
+.save-bar{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;gap:12px;flex-wrap:wrap;}
 .save-bar-actions{display:flex;gap:8px;flex-wrap:wrap;}
 
-/* ── KIOSK TABLE ── */
-.kiosk-table-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;overflow:auto;}
-.kiosk-table{width:100%;border-collapse:collapse;font-size:13px;min-width:900px;}
-.kiosk-table thead th{background:var(--surface2);padding:10px 12px;text-align:left;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;color:var(--text2);font-weight:500;border-bottom:1.5px solid var(--border);white-space:nowrap;}
-.kiosk-table tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
-.kiosk-table tbody tr:last-child{border-bottom:none;}
-.kiosk-table tbody tr:hover{background:#fafaf7;}
-.kiosk-table td{padding:8px 12px;vertical-align:middle;}
-.td-tid{font-family:var(--mono);font-weight:600;font-size:12px;white-space:nowrap;}
-.td-edit{cursor:text;}
-.td-edit:hover{background:#eef3ff;}
-.iinput{width:100%;border:none;background:transparent;font-family:var(--sans);font-size:13px;color:var(--text);outline:none;padding:0;min-width:90px;}
-.iinput:focus{background:#fff;border-radius:3px;padding:1px 5px;box-shadow:0 0 0 2px var(--accent);}
-.iselect{border:none;background:transparent;font-family:var(--sans);font-size:13px;color:var(--text);outline:none;cursor:pointer;padding:0;width:100%;}
-.td-center{text-align:center;}
-.adot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+/* ══ KIOSK CARDS (v1 design) ══ */
+.kiosk-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:16px;}
+.kiosk-card{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:20px;cursor:pointer;transition:border-color .2s,box-shadow .2s;position:relative;}
+.kiosk-card:hover{border-color:var(--accent);box-shadow:0 4px 20px rgba(26,107,255,.1);}
+.kiosk-card .k-id{font-family:var(--mono);font-size:15px;font-weight:600;margin-bottom:11px;padding-right:70px;}
+.kiosk-card .k-meta{display:flex;flex-direction:column;gap:5px;}
+.kiosk-card .k-row{display:flex;align-items:center;gap:8px;font-size:13px;}
+.kiosk-card .k-row .klabel{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#aaa;width:52px;flex-shrink:0;}
+.kiosk-card .k-row .kval{color:var(--text);font-weight:500;font-size:13px;}
+.kiosk-card .k-status-area{position:absolute;top:16px;right:16px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.kiosk-card .k-findings{margin-top:12px;padding-top:11px;border-top:1px solid var(--border);}
+.kiosk-card .k-findings .fl{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;color:#aaa;margin-bottom:3px;}
+.kiosk-card .k-findings .ft{font-size:13px;color:var(--text);}
+.kiosk-card .k-resolution{margin-top:7px;}
+.kiosk-card .k-resolution .fl{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;color:#aaa;margin-bottom:3px;}
+.kiosk-card .k-resolution .ft{font-size:13px;color:var(--text2);}
+.kiosk-card .k-footer{margin-top:12px;display:flex;align-items:center;justify-content:space-between;}
+.kiosk-card .k-audited{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:5px;}
+.adot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0;}
 .adot.done{background:var(--ok);}
 .adot.none{background:#d1d5db;}
 
-/* ── BADGES ── */
-.badge{padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--mono);text-transform:uppercase;letter-spacing:.3px;}
+/* ══ BADGES ══ */
+.badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;font-family:var(--mono);text-transform:uppercase;letter-spacing:.3px;}
 .badge-ok{background:#dcfce7;color:var(--ok);}
 .badge-warn{background:#fef3c7;color:var(--warn);}
 .badge-error{background:#fee2e2;color:var(--error);}
 .badge-staging{background:#e0e7ff;color:#4338ca;}
 .badge-prod{background:#fce7f3;color:#9d174d;}
+.badge-info{background:#f0f9ff;color:#0369a1;}
 
-/* ── DASHBOARD ── */
+/* ══ DASHBOARD ══ */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
-.stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:16px 18px;}
+.stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:16px 20px;}
 .stat-card .sl{font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin-bottom:8px;}
 .stat-card .sv{font-size:30px;font-weight:600;font-family:var(--mono);}
 .stat-card.ok .sv{color:var(--ok);}
@@ -121,84 +133,110 @@ main{flex:1;padding:24px;max-width:1360px;margin:0 auto;width:100%;}
 .sessions-wrap td{padding:11px 14px;border-top:1px solid var(--border);vertical-align:middle;}
 .sessions-wrap tr:hover td{background:var(--bg);}
 
-/* ── MODALS ── */
+/* ══ MODALS ══ */
 .mbg{display:none;position:fixed;inset:0;background:rgba(26,25,23,.52);z-index:200;align-items:center;justify-content:center;padding:16px;}
 .mbg.open{display:flex;}
 .modal{background:var(--surface);border-radius:10px;border:1.5px solid var(--border);width:560px;max-width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 12px 48px rgba(0,0,0,.2);}
-.modal.lg{width:920px;}
+.modal.lg{width:940px;}
 .modal.sm{width:420px;}
 .mhead{display:flex;align-items:flex-start;justify-content:space-between;padding:18px 22px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1;}
 .mhead h3{font-size:16px;font-weight:600;}
 .msub{font-size:11px;color:var(--text2);margin-top:2px;font-family:var(--mono);}
-.mclose{background:none;border:none;font-size:22px;color:var(--text2);cursor:pointer;line-height:1;padding:0 2px;flex-shrink:0;}
+.mclose{background:none;border:none;font-size:22px;color:var(--text2);cursor:pointer;line-height:1;padding:0 4px;flex-shrink:0;}
 .mbody{padding:22px;display:flex;flex-direction:column;gap:15px;}
 .mfoot{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
 
-/* ── AUDIT VIEW ── */
-.audit-meta{display:flex;gap:18px;flex-wrap:wrap;padding:12px 14px;background:var(--surface2);border-radius:var(--r);font-size:13px;margin-bottom:4px;}
+/* Audit view table */
+.audit-meta{display:flex;gap:18px;flex-wrap:wrap;padding:12px 14px;background:var(--surface2);border-radius:var(--r);font-size:13px;}
 .audit-meta span{color:var(--text2);}
 .audit-meta strong{color:var(--text);}
 .avt{width:100%;border-collapse:collapse;font-size:13px;}
-.avt th{background:var(--surface2);padding:8px 11px;text-align:left;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;color:var(--text2);}
-.avt td{padding:9px 11px;border-top:1px solid var(--border);vertical-align:top;}
+.avt th{background:var(--surface2);padding:8px 12px;text-align:left;font-size:10px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px;color:var(--text2);}
+.avt td{padding:10px 12px;border-top:1px solid var(--border);vertical-align:top;}
 .avt tr:hover td{background:#fafaf8;}
 
-/* ── MISC ── */
-.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.section-header h2{font-size:18px;font-weight:600;}
+/* ══ MISC ══ */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.section-header h2{font-size:20px;font-weight:600;}
 .section-header p{color:var(--text2);font-size:13px;margin-top:2px;}
 .loading{display:flex;align-items:center;justify-content:center;gap:10px;padding:44px;color:var(--text2);font-family:var(--mono);font-size:13px;}
 .spinner{width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .empty{text-align:center;padding:48px 20px;color:var(--text2);}
-.empty h3{font-size:15px;margin-bottom:7px;color:var(--text);}
+.empty h3{font-size:15px;margin-bottom:8px;color:var(--text);}
 .empty p{font-size:13px;line-height:1.7;}
 #toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:11px 18px;border-radius:8px;font-size:12px;opacity:0;transition:opacity .3s;z-index:999;pointer-events:none;font-family:var(--mono);max-width:300px;}
 #toast.show{opacity:1;}
 #toast.success{background:var(--ok);}
 #toast.error-toast{background:var(--error);}
 .url-display{font-family:var(--mono);font-size:11px;color:var(--text2);background:var(--surface2);padding:7px 11px;border-radius:var(--r);word-break:break-all;margin-top:3px;}
-.cal-input{padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-family:var(--sans);font-size:14px;background:var(--bg);color:var(--text);outline:none;transition:border .2s;cursor:pointer;}
-.cal-input:focus{border-color:var(--accent);}
+.confirm-row{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#fff7ed;border:1px solid #fdba74;border-radius:var(--r);font-size:12px;white-space:nowrap;}
 input[type=date]{color-scheme:light;}
-
-/* confirm inline */
-.confirm-row{display:flex;align-items:center;gap:8px;padding:6px 10px;background:#fff7ed;border:1px solid #fdba74;border-radius:var(--r);font-size:12px;}
 
 @media(max-width:700px){
   .stats-row{grid-template-columns:1fr 1fr;}
-  .form-row,.form-row3{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
   main{padding:14px;}
   header{padding:10px 14px;}
   nav{padding:0 12px;overflow-x:auto;}
+  .kiosk-grid{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
 
-<!-- ══ AUDITOR PICKER ══ -->
-<div id="picker-screen">
-  <div class="picker-box">
-    <div class="picker-logo">KAS · v3.0</div>
-    <h1>Kiosk Audit System</h1>
-    <p>Select your name to begin today's audit.</p>
+<!-- ══════════════════════════════════════
+     SETUP SCREEN (Step 1: Script URL → Step 2: Auditor)
+     ══════════════════════════════════════ -->
+<div id="setup-screen">
+  <div class="setup-box">
 
-    <div class="picker-list" id="auditor-list">
-      <div class="picker-loading">
-        <div style="display:inline-flex;align-items:center;gap:8px;"><div class="spinner"></div> Loading auditors…</div>
+    <!-- Step dots -->
+    <div style="padding:16px 40px 0;">
+      <div class="step-indicator">
+        <div class="step-dot active" id="dot-0"></div>
+        <div class="step-dot" id="dot-1"></div>
       </div>
     </div>
 
-    <div class="picker-divider">or enter manually</div>
-    <div class="picker-manual">
-      <input type="text" id="manual-name" placeholder="Type your name…" autocomplete="off">
-      <button class="btn btn-outline" onclick="selectManual()">Use</button>
+    <!-- STEP 1: Apps Script URL -->
+    <div class="setup-step active" id="step-0">
+      <div class="setup-logo">KAS · v3.0</div>
+      <h1>Kiosk Audit System</h1>
+      <p class="sub">Enter your Google Apps Script Web App URL to connect to your spreadsheet. You can change this later in Settings.</p>
+      <div class="field">
+        <label>Apps Script Web App URL</label>
+        <input type="url" id="setup-url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off">
+        <div style="font-size:11px;color:var(--text2);margin-top:4px;">Deploy via <em>Extensions → Apps Script → Deploy → New Deployment → Web App</em></div>
+      </div>
+      <button class="btn-primary" onclick="goStep1()">Next →</button>
+      <div style="text-align:center;margin-top:12px;">
+        <button class="btn-link" onclick="skipUrl()">Skip for now (read-only mode)</button>
+      </div>
     </div>
-    <button class="btn-primary" id="picker-continue" onclick="continueSession()" disabled>Continue →</button>
+
+    <!-- STEP 2: Auditor picker -->
+    <div class="setup-step" id="step-1">
+      <div class="setup-logo">KAS · v3.0</div>
+      <h2>Select Auditor</h2>
+      <p class="sub">Choose your name to begin today's audit.</p>
+      <div class="picker-list" id="auditor-list">
+        <div class="picker-loading"><div style="display:inline-flex;align-items:center;gap:8px;"><div class="spinner"></div>Loading auditors…</div></div>
+      </div>
+      <div class="divider">or enter manually</div>
+      <div class="manual-row">
+        <input type="text" id="manual-name" placeholder="Type your name…" autocomplete="off">
+        <button class="btn btn-outline" onclick="selectManual()">Use</button>
+      </div>
+      <button class="btn-primary" id="picker-btn" onclick="continueSession()" disabled>Start Audit →</button>
+    </div>
+
   </div>
 </div>
 
-<!-- ══ APP ══ -->
+<!-- ══════════════════════════════════════
+     APP
+     ══════════════════════════════════════ -->
 <div id="app">
   <header>
     <div class="header-left">
@@ -223,9 +261,9 @@ input[type=date]{color-scheme:light;}
     <!-- KIOSKS TAB -->
     <div id="tab-kiosks">
       <div class="save-bar">
-        <div class="save-bar-meta">
-          <p><strong id="save-bar-count">0 kiosks</strong> &nbsp;·&nbsp; Auditor: <strong id="save-bar-auditor"></strong> &nbsp;·&nbsp; Date: <strong id="save-bar-date"></strong></p>
-          <p style="font-size:12px;color:#aaa;margin-top:2px;">Click any cell to edit inline · Changes are local until saved</p>
+        <div>
+          <p style="font-size:14px;"><strong id="save-bar-count">0 kiosks</strong> &nbsp;·&nbsp; Auditor: <strong id="save-bar-auditor"></strong> &nbsp;·&nbsp; <strong id="save-bar-date"></strong></p>
+          <p style="font-size:12px;color:#aaa;margin-top:2px;">Click any card to edit findings and resolution</p>
         </div>
         <div class="save-bar-actions">
           <button class="btn btn-outline" onclick="loadKiosks()">⟳ Refresh</button>
@@ -236,7 +274,7 @@ input[type=date]{color-scheme:light;}
       <div class="section-header">
         <div>
           <h2>Kiosk Terminals</h2>
-          <p>Inline editable — click any cell to update. Status auto-updates from Findings.</p>
+          <p>Click any card to edit findings, resolution, or details</p>
         </div>
       </div>
       <div id="kiosk-list">
@@ -256,10 +294,41 @@ input[type=date]{color-scheme:light;}
         <div class="stat-card warn"><div class="sl">Has Issues</div><div class="sv" id="stat-issues">—</div></div>
         <div class="stat-card err"><div class="sl">Needs Action</div><div class="sv" id="stat-action">—</div></div>
       </div>
-      <div class="section-header"><h2 style="font-size:15px;">Audit Sessions</h2></div>
+      <div class="section-header" style="margin-top:4px;"><h2 style="font-size:16px;">Audit Sessions</h2></div>
       <div id="audit-sessions"><div class="loading"><div class="spinner"></div> Loading…</div></div>
     </div>
   </main>
+</div>
+
+<!-- ══ MODAL: EDIT KIOSK ══ -->
+<div class="mbg" id="edit-modal">
+  <div class="modal">
+    <div class="mhead">
+      <div><h3 id="edit-modal-title">Edit Kiosk</h3><div class="msub" id="edit-modal-sub"></div></div>
+      <button class="mclose" onclick="closeModal('edit-modal')">×</button>
+    </div>
+    <div class="mbody">
+      <input type="hidden" id="edit-idx">
+      <div class="form-row">
+        <div class="field"><label>Terminal ID</label><input type="text" id="edit-tid" readonly style="background:#eee;cursor:not-allowed;"></div>
+        <div class="field"><label>Version</label><input type="text" id="edit-version"></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>IP Address</label><input type="text" id="edit-ip"></div>
+        <div class="field"><label>Environment</label>
+          <select id="edit-env"><option>STAGING</option><option>PROD</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Findings</label><textarea id="edit-findings" placeholder="e.g. OK, Black screen, System Offline…"></textarea></div>
+      <div class="field"><label>Resolution</label><textarea id="edit-resolution" placeholder="Steps taken or recommended…"></textarea></div>
+    </div>
+    <div class="mfoot">
+      <button class="btn btn-danger btn-sm" onclick="confirmRemoveFromModal()">🗑 Remove</button>
+      <div style="flex:1;"></div>
+      <button class="btn btn-outline" onclick="closeModal('edit-modal')">Cancel</button>
+      <button class="btn btn-blue" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
 </div>
 
 <!-- ══ MODAL: ADD KIOSK ══ -->
@@ -294,7 +363,9 @@ input[type=date]{color-scheme:light;}
       <div><h3 id="av-title">Audit Session</h3><div class="msub" id="av-sub"></div></div>
       <button class="mclose" onclick="closeModal('audit-view-modal')">×</button>
     </div>
-    <div class="mbody" id="av-body"><div class="loading"><div class="spinner"></div> Loading…</div></div>
+    <div class="mbody" id="av-body">
+      <div class="loading"><div class="spinner"></div> Loading…</div>
+    </div>
   </div>
 </div>
 
@@ -306,22 +377,23 @@ input[type=date]{color-scheme:light;}
       <div class="field">
         <label>Apps Script Web App URL</label>
         <input type="url" id="s-url" placeholder="https://script.google.com/macros/s/…/exec">
-        <div class="url-display" id="s-url-display">Not configured</div>
+        <div class="url-display" id="s-url-disp">Not configured</div>
       </div>
       <div class="field">
         <label>Google Spreadsheet ID</label>
-        <input type="text" id="s-sheetid" placeholder="Paste spreadsheet ID or full URL">
-        <div class="url-display" id="s-sheetid-display">—</div>
-        <span style="font-size:11px;color:var(--text2);">Find the ID in your sheet URL: …/spreadsheets/d/<strong>THIS_PART</strong>/edit</span>
+        <input type="text" id="s-sheetid" placeholder="Paste sheet ID or full URL">
+        <div class="url-display" id="s-sheetid-disp">—</div>
+        <span style="font-size:11px;color:var(--text2);">From your sheet URL: …/spreadsheets/d/<strong>THIS_PART</strong>/edit</span>
       </div>
-      <div class="field">
-        <label>Auditors Sheet Name</label>
-        <input type="text" id="s-audsheet" placeholder="e.g. Auditors" value="">
-        <span style="font-size:11px;color:var(--text2);">Name of the sheet tab that lists auditor names (column A)</span>
-      </div>
-      <div class="field">
-        <label>Template Sheet Name</label>
-        <input type="text" id="s-tmplsheet" placeholder="e.g. Template" value="">
+      <div class="form-row">
+        <div class="field">
+          <label>Auditors Sheet Name</label>
+          <input type="text" id="s-audsheet" placeholder="e.g. Auditors">
+        </div>
+        <div class="field">
+          <label>Template Sheet Name</label>
+          <input type="text" id="s-tmplsheet" placeholder="e.g. Template">
+        </div>
       </div>
     </div>
     <div class="mfoot">
@@ -334,17 +406,14 @@ input[type=date]{color-scheme:light;}
 <!-- ══ MODAL: DATE PICKER ══ -->
 <div class="mbg" id="date-modal">
   <div class="modal sm">
-    <div class="mhead"><h3>📅 Select Audit Date</h3><button class="mclose" onclick="closeModal('date-modal')">×</button></div>
+    <div class="mhead"><h3>📅 Audit Date</h3><button class="mclose" onclick="closeModal('date-modal')">×</button></div>
     <div class="mbody">
-      <div class="field">
-        <label>Date</label>
-        <input type="date" id="date-picker" class="cal-input">
-      </div>
-      <p style="font-size:12px;color:var(--text2);">The selected date will be used as the audit sheet name when saving.</p>
+      <div class="field"><label>Select Date</label><input type="date" id="date-picker" style="padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-size:14px;background:var(--bg);outline:none;width:100%;"></div>
+      <p style="font-size:12px;color:var(--text2);">Used as the audit sheet name when saving (YYYY-MM-DD - Auditor).</p>
     </div>
     <div class="mfoot">
       <button class="btn btn-outline" onclick="closeModal('date-modal')">Cancel</button>
-      <button class="btn btn-blue" onclick="applyDate()">Apply Date</button>
+      <button class="btn btn-blue" onclick="applyDate()">Apply</button>
     </div>
   </div>
 </div>
@@ -353,17 +422,14 @@ input[type=date]{color-scheme:light;}
 <div class="mbg" id="paste-modal">
   <div class="modal">
     <div class="mhead">
-      <div><h3>📋 Paste Sheet Data</h3><div class="msub">Auto-load blocked by browser — paste manually</div></div>
+      <div><h3>📋 Paste Sheet Data</h3><div class="msub">Auto-load blocked (CORS) — paste manually</div></div>
       <button class="mclose" onclick="closeModal('paste-modal')">×</button>
     </div>
     <div class="mbody">
-      <p style="font-size:13px;color:var(--text2);line-height:1.7;">
-        Open your <a id="sheet-link" href="#" target="_blank" style="color:var(--accent);">Google Sheet → Template tab</a>,
-        press <strong>Ctrl+A</strong> then <strong>Ctrl+C</strong>, and paste below:
-      </p>
+      <p style="font-size:13px;color:var(--text2);line-height:1.7;">Open your <a id="sheet-link" href="#" target="_blank" style="color:var(--accent);">Google Sheet → Template tab</a>, press <strong>Ctrl+A</strong> then <strong>Ctrl+C</strong>, and paste below:</p>
       <div class="field">
-        <label>Paste Cells Here (Tab-separated)</label>
-        <textarea id="paste-csv" style="min-height:120px;font-family:var(--mono);font-size:12px;" placeholder="Paste copied spreadsheet cells…"></textarea>
+        <label>Paste Tab-Separated Cells</label>
+        <textarea id="paste-csv" style="min-height:120px;font-family:var(--mono);font-size:12px;" placeholder="Paste copied cells here…"></textarea>
       </div>
     </div>
     <div class="mfoot">
@@ -377,53 +443,83 @@ input[type=date]{color-scheme:light;}
 
 <script>
 // ══════════════════════════════════════════════
-//  PERSISTENT CONFIG (localStorage)
+//  CONFIG (persisted in localStorage)
 // ══════════════════════════════════════════════
-let CFG = {
-  scriptUrl:    localStorage.getItem('kas_scriptUrl')   || '',
-  sheetId:      localStorage.getItem('kas_sheetId')     || '1s0Kr46bF4KYHjdW67BcsECNUAssbiSylkDFUN5nNr1Y',
-  auditorSheet: localStorage.getItem('kas_auditorSheet')|| 'Auditors',
-  templateSheet:localStorage.getItem('kas_tmplSheet')   || 'Template',
+var CFG = {
+  scriptUrl:    localStorage.getItem('kas_scriptUrl')    || '',
+  sheetId:      localStorage.getItem('kas_sheetId')      || '1s0Kr46bF4KYHjdW67BcsECNUAssbiSylkDFUN5nNr1Y',
+  auditorSheet: localStorage.getItem('kas_auditorSheet') || 'Auditors',
+  tmplSheet:    localStorage.getItem('kas_tmplSheet')    || 'Template'
 };
 function saveCFG() {
   localStorage.setItem('kas_scriptUrl',    CFG.scriptUrl);
   localStorage.setItem('kas_sheetId',      CFG.sheetId);
   localStorage.setItem('kas_auditorSheet', CFG.auditorSheet);
-  localStorage.setItem('kas_tmplSheet',    CFG.templateSheet);
+  localStorage.setItem('kas_tmplSheet',    CFG.tmplSheet);
 }
 
 // ══════════════════════════════════════════════
-//  SESSION STATE
+//  STATE
 // ══════════════════════════════════════════════
-let auditorName = '';
-let kiosks = [];
+var auditorName = '';
+var kiosks = [];
+var editIdx = -1;
 
-// Date state — defaults to today
-let activeDate = new Date();
-function fmtDateStr(d)   { return d.toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}); }
-function fmtDateShort(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
-let displayDate = fmtDateStr(activeDate);
-let shortDate   = fmtDateShort(activeDate);
+var activeDate = new Date();
+function fmtLong(d) { return d.toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'}); }
+function fmtShort(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function pad(n){ return String(n).padStart(2,'0'); }
+var displayDate = fmtLong(activeDate);
+var shortDate   = fmtShort(activeDate);
 
-function updateDateDisplay() {
-  displayDate = fmtDateStr(activeDate);
-  shortDate   = fmtDateShort(activeDate);
-  document.getElementById('header-date').textContent = displayDate;
+function updateDateUI() {
+  displayDate = fmtLong(activeDate);
+  shortDate   = fmtShort(activeDate);
+  document.getElementById('header-date').textContent   = displayDate;
   document.getElementById('save-bar-date').textContent = displayDate;
 }
-
 document.getElementById('header-date').textContent = displayDate;
+document.getElementById('date-picker').value = fmtShort(new Date());
 
 // ══════════════════════════════════════════════
-//  AUDITOR PICKER
+//  SETUP FLOW
 // ══════════════════════════════════════════════
-let selectedAuditor = '';
+var selectedAuditor = '';
 
+// If already configured, pre-fill step 0
+if (CFG.scriptUrl) document.getElementById('setup-url').value = CFG.scriptUrl;
+
+function setDot(step) {
+  for (var i = 0; i < 2; i++) {
+    var d = document.getElementById('dot-'+i);
+    if (i < step) d.className = 'step-dot done';
+    else if (i === step) d.className = 'step-dot active';
+    else d.className = 'step-dot';
+  }
+}
+
+function goStep1() {
+  var url = document.getElementById('setup-url').value.trim();
+  if (url && !url.startsWith('https://')) { showToast('URL must start with https://','error-toast'); return; }
+  if (url) { CFG.scriptUrl = url; saveCFG(); }
+  document.getElementById('step-0').classList.remove('active');
+  document.getElementById('step-1').classList.add('active');
+  setDot(1);
+  loadAuditors();
+}
+
+function skipUrl() {
+  document.getElementById('step-0').classList.remove('active');
+  document.getElementById('step-1').classList.add('active');
+  setDot(1);
+  loadAuditors();
+}
+
+// ── Auditor picker ──
 function loadAuditors() {
-  const cbName = 'audCb_' + Date.now();
-  let done = false;
-
-  const timer = setTimeout(function() {
+  var cbName = 'audCb_' + Date.now();
+  var done = false;
+  var timer = setTimeout(function() {
     if (done) return; done = true; delete window[cbName];
     showAuditorFallback();
   }, 7000);
@@ -431,59 +527,54 @@ function loadAuditors() {
   window[cbName] = function(data) {
     if (done) return; done = true; clearTimeout(timer); delete window[cbName];
     try {
-      const rows = data.table.rows;
-      const names = rows
-        .map(r => r.c && r.c[0] && r.c[0].v ? String(r.c[0].v).trim() : '')
-        .filter(n => n.length > 0 && n.toLowerCase() !== 'name' && n.toLowerCase() !== 'auditor');
+      var rows = data.table.rows || [];
+      var names = rows.map(function(r){ return r.c && r.c[0] && r.c[0].v ? String(r.c[0].v).trim() : ''; })
+        .filter(function(n){ return n && n.toLowerCase() !== 'name' && n.toLowerCase() !== 'auditor'; });
       renderAuditorList(names);
     } catch(e) { showAuditorFallback(); }
   };
 
-  const s = document.createElement('script');
-  s.onerror = function() { if(done)return; done=true; clearTimeout(timer); showAuditorFallback(); };
+  var s = document.createElement('script');
+  s.onerror = function(){ if(done)return; done=true; clearTimeout(timer); showAuditorFallback(); };
   s.src = 'https://docs.google.com/spreadsheets/d/' + CFG.sheetId +
-          '/gviz/tq?tqx=out:json&callback=' + cbName + '&sheet=' + encodeURIComponent(CFG.auditorSheet);
+    '/gviz/tq?tqx=out:json&callback=' + cbName + '&sheet=' + encodeURIComponent(CFG.auditorSheet);
   document.head.appendChild(s);
 }
 
 function renderAuditorList(names) {
   if (!names.length) { showAuditorFallback(); return; }
-  let html = '';
+  var html = '';
   names.forEach(function(n) {
-    const init = n.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
-    html += '<div class="picker-item" onclick="selectAuditor(\'' + esc(n) + '\',this)">' +
-      '<div class="avatar">' + init + '</div>' +
-      '<span>' + esc(n) + '</span>' +
-      '</div>';
+    var init = n.trim().split(/\s+/).map(function(w){ return w[0]; }).join('').substring(0,2).toUpperCase();
+    html += '<div class="picker-item" onclick="selectAuditor(\''+esc(n)+'\',this)">' +
+      '<div class="avatar">'+init+'</div><span>'+esc(n)+'</span></div>';
   });
   document.getElementById('auditor-list').innerHTML = html;
 }
 
 function showAuditorFallback() {
   document.getElementById('auditor-list').innerHTML =
-    '<div class="picker-loading" style="color:var(--text2);font-size:12px;">Could not load auditors from sheet.<br>Enter your name manually below.</div>';
+    '<div class="picker-loading" style="color:var(--text2);font-size:12px;">Could not load from sheet — enter name manually below.</div>';
 }
 
 function selectAuditor(name, el) {
   selectedAuditor = name;
-  document.querySelectorAll('.picker-item').forEach(i => i.classList.remove('selected'));
+  document.querySelectorAll('.picker-item').forEach(function(i){ i.classList.remove('selected'); });
   if (el) el.classList.add('selected');
   document.getElementById('manual-name').value = '';
-  document.getElementById('picker-continue').disabled = false;
+  document.getElementById('picker-btn').disabled = false;
 }
 
 function selectManual() {
-  const v = document.getElementById('manual-name').value.trim();
+  var v = document.getElementById('manual-name').value.trim();
   if (!v) return;
   selectedAuditor = v;
-  document.querySelectorAll('.picker-item').forEach(i => i.classList.remove('selected'));
-  document.getElementById('picker-continue').disabled = false;
+  document.querySelectorAll('.picker-item').forEach(function(i){ i.classList.remove('selected'); });
+  document.getElementById('picker-btn').disabled = false;
   showToast('Name set: ' + v, 'success');
 }
 
-document.getElementById('manual-name').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') selectManual();
-});
+document.getElementById('manual-name').addEventListener('keydown', function(e){ if(e.key==='Enter') selectManual(); });
 
 function continueSession() {
   if (!selectedAuditor) return;
@@ -496,74 +587,79 @@ function applySession(name) {
   document.getElementById('auditor-display').textContent = '👤 ' + name;
   document.getElementById('save-bar-auditor').textContent = name;
   document.getElementById('save-bar-date').textContent = displayDate;
-  document.getElementById('picker-screen').style.display = 'none';
-  document.getElementById('app').classList.add('visible');
-  // Update sheet link in paste modal
   document.getElementById('sheet-link').href = 'https://docs.google.com/spreadsheets/d/' + CFG.sheetId;
+  document.getElementById('setup-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
   loadKiosks();
 }
 
 function switchAuditor() {
   sessionStorage.removeItem('kas_auditor');
   document.getElementById('app').classList.remove('visible');
-  document.getElementById('picker-screen').style.display = 'flex';
+  document.getElementById('setup-screen').style.display = 'flex';
+  // Return to step 1 (auditor picker)
+  document.getElementById('step-0').classList.remove('active');
+  document.getElementById('step-1').classList.add('active');
+  setDot(1);
   selectedAuditor = '';
-  document.querySelectorAll('.picker-item').forEach(i => i.classList.remove('selected'));
+  document.querySelectorAll('.picker-item').forEach(function(i){ i.classList.remove('selected'); });
   document.getElementById('manual-name').value = '';
-  document.getElementById('picker-continue').disabled = true;
+  document.getElementById('picker-btn').disabled = true;
   kiosks = [];
 }
 
 // Auto-restore session on refresh
 (function init() {
-  loadAuditors();
-  const saved = sessionStorage.getItem('kas_auditor');
+  // If URL was previously set, skip step 0 hint — but still show step 0 for first-time setup
+  var saved = sessionStorage.getItem('kas_auditor');
   if (saved) {
+    // Already have session, skip setup entirely
     selectedAuditor = saved;
+    loadAuditors(); // load in background for switch-auditor
     applySession(saved);
+  } else if (CFG.scriptUrl) {
+    // URL already known, load auditors in background
+    loadAuditors();
+    // But still show step 0 so they confirm URL (pre-filled)
   }
 })();
 
 // ══════════════════════════════════════════════
 //  DATE PICKER
 // ══════════════════════════════════════════════
-document.getElementById('date-picker').value = fmtDateShort(new Date());
-
 function applyDate() {
-  const v = document.getElementById('date-picker').value;
+  var v = document.getElementById('date-picker').value;
   if (!v) return;
-  const parts = v.split('-');
-  activeDate = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
-  updateDateDisplay();
+  var p = v.split('-');
+  activeDate = new Date(+p[0], +p[1]-1, +p[2]);
+  updateDateUI();
   closeModal('date-modal');
-  showToast('Audit date set: ' + displayDate, 'success');
+  showToast('Audit date: ' + displayDate, 'success');
 }
 
 // ══════════════════════════════════════════════
 //  SETTINGS
 // ══════════════════════════════════════════════
 function openSettings() {
-  document.getElementById('s-url').value        = CFG.scriptUrl;
-  document.getElementById('s-url-display').textContent    = CFG.scriptUrl || 'Not configured';
-  document.getElementById('s-sheetid').value    = CFG.sheetId;
-  document.getElementById('s-sheetid-display').textContent = CFG.sheetId;
-  document.getElementById('s-audsheet').value   = CFG.auditorSheet;
-  document.getElementById('s-tmplsheet').value  = CFG.templateSheet;
+  document.getElementById('s-url').value       = CFG.scriptUrl;
+  document.getElementById('s-url-disp').textContent      = CFG.scriptUrl || 'Not configured';
+  document.getElementById('s-sheetid').value   = CFG.sheetId;
+  document.getElementById('s-sheetid-disp').textContent  = CFG.sheetId;
+  document.getElementById('s-audsheet').value  = CFG.auditorSheet;
+  document.getElementById('s-tmplsheet').value = CFG.tmplSheet;
   openModal('settings-modal');
 }
 
 function saveSettings() {
-  const url    = document.getElementById('s-url').value.trim();
-  let   sheetId = document.getElementById('s-sheetid').value.trim();
-  // Accept full URL or just ID
-  const m = sheetId.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
-  if (m) sheetId = m[1];
-
-  if (url && !url.startsWith('https://')) { showToast('URL must start with https://', 'error-toast'); return; }
-  CFG.scriptUrl     = url;
-  CFG.sheetId       = sheetId || CFG.sheetId;
-  CFG.auditorSheet  = document.getElementById('s-audsheet').value.trim()  || 'Auditors';
-  CFG.templateSheet = document.getElementById('s-tmplsheet').value.trim() || 'Template';
+  var url = document.getElementById('s-url').value.trim();
+  var sid = document.getElementById('s-sheetid').value.trim();
+  var m = sid.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) sid = m[1];
+  if (url && !url.startsWith('https://')) { showToast('URL must start with https://','error-toast'); return; }
+  CFG.scriptUrl    = url;
+  CFG.sheetId      = sid || CFG.sheetId;
+  CFG.auditorSheet = document.getElementById('s-audsheet').value.trim() || 'Auditors';
+  CFG.tmplSheet    = document.getElementById('s-tmplsheet').value.trim() || 'Template';
   saveCFG();
   document.getElementById('sheet-link').href = 'https://docs.google.com/spreadsheets/d/' + CFG.sheetId;
   closeModal('settings-modal');
@@ -574,79 +670,75 @@ function saveSettings() {
 //  TABS
 // ══════════════════════════════════════════════
 function showTab(tab, btn) {
-  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(function(b){ b.classList.remove('active'); });
   btn.classList.add('active');
-  document.getElementById('tab-kiosks').style.display    = tab === 'kiosks'    ? '' : 'none';
-  document.getElementById('tab-dashboard').style.display = tab === 'dashboard' ? '' : 'none';
+  document.getElementById('tab-kiosks').style.display    = tab==='kiosks'    ? '' : 'none';
+  document.getElementById('tab-dashboard').style.display = tab==='dashboard' ? '' : 'none';
   if (tab === 'dashboard') loadDashboard();
 }
 
 // ══════════════════════════════════════════════
-//  LOAD KIOSKS — JSONP with CSV fallback
+//  LOAD KIOSKS — JSONP → CSV fallback
 // ══════════════════════════════════════════════
 function loadKiosks() {
   document.getElementById('kiosk-list').innerHTML = '<div class="loading"><div class="spinner"></div> Loading kiosks…</div>';
-  const old = document.getElementById('gviz-kiosk-script');
+  var old = document.getElementById('gviz-kiosk-s');
   if (old) old.remove();
 
-  const cbName = 'kvizCb_' + Date.now();
-  let done = false;
+  var cbName = 'kCb_' + Date.now();
+  var done = false;
 
-  const timer = setTimeout(function() {
-    if (done) return; done = true; delete window[cbName];
-    tryDirectLoad();
+  var timer = setTimeout(function(){
+    if(done)return; done=true; delete window[cbName]; tryDirectLoad();
   }, 8000);
 
   window[cbName] = function(data) {
-    if (done) return; done = true; clearTimeout(timer); delete window[cbName];
+    if(done)return; done=true; clearTimeout(timer); delete window[cbName];
     try {
-      const rows = data.table.rows;
+      var rows = data.table.rows || [];
       kiosks = rows
-        .map(r => r.c ? r.c.map(c => (c && c.v != null) ? String(c.v).trim() : '') : [])
-        .filter(r => r[0] && r[0].length > 0)
-        .map(r => ({ tid:r[0]||'', version:r[1]||'', ip:r[2]||'', env:r[3]||'STAGING', findings:r[4]||'', resolution:r[5]||'', audited:false }));
+        .map(function(r){ return r.c ? r.c.map(function(c){ return (c&&c.v!=null)?String(c.v).trim():''; }) : []; })
+        .filter(function(r){ return r[0] && r[0].length > 0; })
+        .map(function(r){ return { tid:r[0]||'',version:r[1]||'',ip:r[2]||'',env:r[3]||'STAGING',findings:r[4]||'',resolution:r[5]||'',audited:false }; });
       if (!kiosks.length) {
-        document.getElementById('kiosk-list').innerHTML = '<div class="empty"><h3>No data in template sheet</h3><p>Make sure row 2+ has data with Terminal ID in column A.</p></div>';
+        document.getElementById('kiosk-list').innerHTML = '<div class="empty"><h3>No data found</h3><p>Check the Template sheet has data from row 2 with Terminal ID in column A.</p></div>';
         return;
       }
-      renderTable();
+      renderCards();
       document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks';
     } catch(e) {
-      document.getElementById('kiosk-list').innerHTML = '<div class="empty"><h3>Parse error</h3><p>' + e.message + '</p></div>';
+      document.getElementById('kiosk-list').innerHTML = '<div class="empty"><h3>Parse error</h3><p>'+e.message+'</p></div>';
     }
   };
 
-  const s = document.createElement('script');
-  s.id = 'gviz-kiosk-script';
-  s.onerror = function() { if(done)return; done=true; clearTimeout(timer); tryDirectLoad(); };
-  s.src = 'https://docs.google.com/spreadsheets/d/' + CFG.sheetId +
-          '/gviz/tq?tqx=out:json&callback=' + cbName + '&sheet=' + encodeURIComponent(CFG.templateSheet);
+  var s = document.createElement('script');
+  s.id = 'gviz-kiosk-s';
+  s.onerror = function(){ if(done)return; done=true; clearTimeout(timer); tryDirectLoad(); };
+  s.src = 'https://docs.google.com/spreadsheets/d/'+CFG.sheetId+
+    '/gviz/tq?tqx=out:json&callback='+cbName+'&sheet='+encodeURIComponent(CFG.tmplSheet);
   document.head.appendChild(s);
 }
 
 async function tryDirectLoad() {
   try {
-    const res = await fetch('https://docs.google.com/spreadsheets/d/' + CFG.sheetId +
-      '/export?format=csv&sheet=' + encodeURIComponent(CFG.templateSheet), {mode:'cors'});
+    var res = await fetch('https://docs.google.com/spreadsheets/d/'+CFG.sheetId+
+      '/export?format=csv&sheet='+encodeURIComponent(CFG.tmplSheet), {mode:'cors'});
     if (!res.ok) throw new Error('HTTP '+res.status);
-    const text = await res.text();
-    const rows = parseCSV(text);
-    kiosks = rows.slice(1).filter(r=>r[0]&&r[0].trim()).map(r=>({
-      tid:(r[0]||'').trim(), version:(r[1]||'').trim(), ip:(r[2]||'').trim(),
-      env:(r[3]||'STAGING').trim(), findings:(r[4]||'').trim(), resolution:(r[5]||'').trim(), audited:false
-    }));
-    if (kiosks.length) { renderTable(); document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks'; return; }
+    var text = await res.text();
+    var rows = parseCSV(text);
+    kiosks = rows.slice(1).filter(function(r){ return r[0]&&r[0].trim(); })
+      .map(function(r){ return { tid:(r[0]||'').trim(),version:(r[1]||'').trim(),ip:(r[2]||'').trim(),env:(r[3]||'STAGING').trim(),findings:(r[4]||'').trim(),resolution:(r[5]||'').trim(),audited:false }; });
+    if (kiosks.length) { renderCards(); document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks'; return; }
   } catch(e) {}
   document.getElementById('kiosk-list').innerHTML =
-    '<div class="empty"><h3>⚠️ Could not auto-load</h3>' +
-    '<p>Browser is blocking Google Sheets (CORS). Host on GitHub Pages for auto-loading, or paste manually.</p><br>' +
+    '<div class="empty"><h3>⚠️ Could not auto-load</h3><p>Browser is blocking Google Sheets (CORS). Host on GitHub Pages for auto-loading.</p><br>' +
     '<button class="btn btn-blue" onclick="openModal(\'paste-modal\')">📋 Paste Sheet Data</button></div>';
 }
 
 function parseCSV(text) {
-  const rows=[]; let row=[],cur='',inQ=false;
-  for(let i=0;i<text.length;i++){
-    const c=text[i],n=text[i+1];
+  var rows=[],row=[],cur='',inQ=false;
+  for(var i=0;i<text.length;i++){
+    var c=text[i],n=text[i+1];
     if(inQ){if(c==='"'&&n==='"'){cur+='"';i++;}else if(c==='"')inQ=false;else cur+=c;}
     else{if(c==='"')inQ=true;else if(c===','){row.push(cur);cur='';}
     else if(c==='\n'||(c==='\r'&&n==='\n')){row.push(cur);rows.push(row);row=[];cur='';if(c==='\r')i++;}else cur+=c;}
@@ -656,119 +748,135 @@ function parseCSV(text) {
 }
 
 function loadFromPaste() {
-  const raw = document.getElementById('paste-csv').value.trim();
+  var raw = document.getElementById('paste-csv').value.trim();
   if (!raw) { showToast('Please paste data first.','error-toast'); return; }
-  const lines = raw.split('\n').map(l => l.split('\t').map(c => c.trim()));
-  const start = (lines[0][0].toUpperCase().includes('TERMINAL')||lines[0][0].toUpperCase().includes('KIOSK')) ? 1 : 0;
-  kiosks = lines.slice(start).filter(r=>r[0]&&r[0].length>0).map(r=>({
-    tid:r[0]||'',version:r[1]||'',ip:r[2]||'',env:r[3]||'STAGING',findings:r[4]||'',resolution:r[5]||'',audited:false
-  }));
+  var lines = raw.split('\n').map(function(l){ return l.split('\t').map(function(c){ return c.trim(); }); });
+  var start = (lines[0][0].toUpperCase().includes('TERMINAL')||lines[0][0].toUpperCase().includes('KIOSK')) ? 1 : 0;
+  kiosks = lines.slice(start).filter(function(r){ return r[0]&&r[0].length>0; })
+    .map(function(r){ return {tid:r[0]||'',version:r[1]||'',ip:r[2]||'',env:r[3]||'STAGING',findings:r[4]||'',resolution:r[5]||'',audited:false}; });
   if (!kiosks.length) { showToast('No data found.','error-toast'); return; }
   document.getElementById('paste-csv').value = '';
   closeModal('paste-modal');
-  renderTable();
+  renderCards();
   document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks';
   showToast(kiosks.length + ' kiosks loaded ✓','success');
 }
 
 // ══════════════════════════════════════════════
-//  RENDER TABLE (inline editable)
+//  RENDER KIOSK CARDS (v1 design)
 // ══════════════════════════════════════════════
 function getStatus(k) {
-  const fl = k.findings.toLowerCase();
-  if (!k.findings || k.findings.toUpperCase()==='OK') return 'ok';
-  if (fl.includes('offline')||fl.includes('maintenance')||fl.includes('error')||fl.includes('black screen')) return 'action';
+  var fl = k.findings.toLowerCase();
+  if (!k.findings || k.findings.toUpperCase() === 'OK') return 'ok';
+  if (fl.includes('offline')||fl.includes('maintenance')||fl.includes('error')||fl.includes('black screen')||fl.includes('no ssd')) return 'action';
   return 'issue';
 }
 
-function statusBadge(k) {
-  const s = getStatus(k);
-  if (s==='ok')     return '<span class="badge badge-ok">OK</span>';
-  if (s==='action') return '<span class="badge badge-error">Action</span>';
-  return '<span class="badge badge-warn">Issue</span>';
-}
-
-function renderTable() {
+function renderCards() {
   if (!kiosks.length) {
-    document.getElementById('kiosk-list').innerHTML = '<div class="empty"><h3>No kiosks</h3><p>Add one above.</p></div>';
+    document.getElementById('kiosk-list').innerHTML = '<div class="empty"><h3>No kiosks</h3><p>Add one using the button above.</p></div>';
     return;
   }
-  let html = '<div class="kiosk-table-wrap"><table class="kiosk-table"><thead><tr>' +
-    '<th>Terminal ID</th><th>Version</th><th>IP Address</th><th>Env</th>' +
-    '<th style="min-width:160px">Findings</th><th style="min-width:160px">Resolution</th>' +
-    '<th style="text-align:center">Audited</th><th>Status</th><th>Remove</th></tr></thead><tbody>';
+  var html = '<div class="kiosk-grid">';
+  kiosks.forEach(function(k, i) {
+    var st = getStatus(k);
+    var stBadge = st==='ok'
+      ? '<span class="badge badge-ok">OK</span>'
+      : st==='action'
+        ? '<span class="badge badge-error">Action</span>'
+        : '<span class="badge badge-warn">Issue</span>';
+    var envBadge = k.env==='PROD'
+      ? '<span class="badge badge-prod">PROD</span>'
+      : '<span class="badge badge-staging">STAGING</span>';
+    var auditTxt = k.audited
+      ? '<span class="adot done"></span> Audited'
+      : '<span class="adot none"></span> Pending';
 
-  kiosks.forEach(function(k,i) {
-    const adot = k.audited
-      ? '<span class="adot done" title="Audited"></span>'
-      : '<span class="adot none" title="Not yet audited"></span>';
+    html += '<div class="kiosk-card" onclick="openEdit('+i+')">' +
+      '<div class="k-status-area">'+stBadge+'</div>' +
+      '<div class="k-id">'+esc(k.tid)+'</div>' +
+      '<div class="k-meta">' +
+        '<div class="k-row"><span class="klabel">Version</span><span class="kval">'+(k.version||'—')+'</span></div>' +
+        '<div class="k-row"><span class="klabel">IP</span><span class="kval" style="font-family:var(--mono);font-size:12px;">'+(k.ip||'—')+'</span></div>' +
+        '<div class="k-row"><span class="klabel">Env</span>'+envBadge+'</div>' +
+      '</div>';
 
-    html += '<tr id="krow-'+i+'">' +
-      '<td class="td-tid">' + esc(k.tid) + '</td>' +
-      '<td class="td-edit"><input class="iinput" value="' + esc(k.version) + '" placeholder="—"' +
-        ' onchange="kiosks['+i+'].version=this.value.trim()"' +
-        ' onfocus="kiosks['+i+'].audited=true"></td>' +
-      '<td class="td-edit"><input class="iinput" value="' + esc(k.ip) + '" placeholder="—"' +
-        ' style="font-family:var(--mono);font-size:12px;"' +
-        ' onchange="kiosks['+i+'].ip=this.value.trim()"' +
-        ' onfocus="kiosks['+i+'].audited=true"></td>' +
-      '<td><select class="iselect" onchange="kiosks['+i+'].env=this.value;kiosks['+i+'].audited=true;renderTable()">' +
-        '<option'+(k.env==='STAGING'?' selected':'')+'>STAGING</option>' +
-        '<option'+(k.env==='PROD'?' selected':'')+'>PROD</option>' +
-      '</select></td>' +
-      '<td class="td-edit"><input class="iinput" value="' + esc(k.findings) + '" placeholder="e.g. OK"' +
-        ' onchange="kiosks['+i+'].findings=this.value.trim();renderTable()"' +
-        ' onfocus="kiosks['+i+'].audited=true"></td>' +
-      '<td class="td-edit"><input class="iinput" value="' + esc(k.resolution) + '" placeholder="—"' +
-        ' onchange="kiosks['+i+'].resolution=this.value.trim()"' +
-        ' onfocus="kiosks['+i+'].audited=true"></td>' +
-      '<td class="td-center">' + adot + '</td>' +
-      '<td>' + statusBadge(k) + '</td>' +
-      '<td><button class="btn btn-danger btn-sm" onclick="confirmRemove(' + i + ')">✕</button></td>' +
-      '</tr>';
+    if (k.findings) {
+      html += '<div class="k-findings"><div class="fl">Findings</div><div class="ft">'+esc(k.findings)+'</div></div>';
+    }
+    if (k.resolution) {
+      html += '<div class="k-resolution"><div class="fl">Resolution</div><div class="ft">'+esc(k.resolution)+'</div></div>';
+    }
+
+    html += '<div class="k-footer"><span class="k-audited">'+auditTxt+'</span></div>' +
+      '</div>';
   });
-  html += '</tbody></table></div>';
+  html += '</div>';
   document.getElementById('kiosk-list').innerHTML = html;
 }
 
-// ── Remove kiosk with inline confirm ──
-function confirmRemove(i) {
-  // replace row button with confirm prompt
-  const cell = document.querySelector('#krow-'+i+' td:last-child');
-  if (!cell) return;
-  cell.innerHTML = '<div class="confirm-row">' +
-    '<span>Remove <strong>' + esc(kiosks[i].tid) + '</strong>?</span>' +
-    '<button class="btn btn-danger btn-sm" onclick="removeKiosk('+i+')">Yes</button>' +
-    '<button class="btn btn-outline btn-sm" onclick="renderTable()">No</button>' +
-    '</div>';
+// ══════════════════════════════════════════════
+//  EDIT KIOSK MODAL
+// ══════════════════════════════════════════════
+function openEdit(i) {
+  editIdx = i;
+  var k = kiosks[i];
+  document.getElementById('edit-modal-title').textContent = 'Edit — ' + k.tid;
+  document.getElementById('edit-modal-sub').textContent   = k.ip + ' · ' + k.env;
+  document.getElementById('edit-idx').value       = i;
+  document.getElementById('edit-tid').value       = k.tid;
+  document.getElementById('edit-version').value   = k.version;
+  document.getElementById('edit-ip').value        = k.ip;
+  document.getElementById('edit-env').value       = k.env;
+  document.getElementById('edit-findings').value  = k.findings;
+  document.getElementById('edit-resolution').value= k.resolution;
+  openModal('edit-modal');
 }
 
-function removeKiosk(i) {
-  const tid = kiosks[i].tid;
+function saveEdit() {
+  var i = parseInt(document.getElementById('edit-idx').value);
+  kiosks[i].version    = document.getElementById('edit-version').value.trim();
+  kiosks[i].ip         = document.getElementById('edit-ip').value.trim();
+  kiosks[i].env        = document.getElementById('edit-env').value;
+  kiosks[i].findings   = document.getElementById('edit-findings').value.trim();
+  kiosks[i].resolution = document.getElementById('edit-resolution').value.trim();
+  kiosks[i].audited    = true;
+  closeModal('edit-modal');
+  renderCards();
+  showToast('Kiosk updated ✓','success');
+}
+
+function confirmRemoveFromModal() {
+  var i = parseInt(document.getElementById('edit-idx').value);
+  var tid = kiosks[i].tid;
+  if (!confirm('Remove ' + tid + '? This only removes it from this session.')) return;
   kiosks.splice(i, 1);
-  renderTable();
+  closeModal('edit-modal');
+  renderCards();
   document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks';
-  showToast(tid + ' removed', 'success');
+  showToast(tid + ' removed','success');
 }
 
 // ══════════════════════════════════════════════
 //  ADD KIOSK
 // ══════════════════════════════════════════════
 function addKiosk() {
-  const tid = document.getElementById('add-tid').value.trim();
-  const ip  = document.getElementById('add-ip').value.trim();
+  var tid = document.getElementById('add-tid').value.trim();
+  var ip  = document.getElementById('add-ip').value.trim();
   if (!tid||!ip) { showToast('Terminal ID and IP are required.','error-toast'); return; }
   kiosks.push({
-    tid, version: document.getElementById('add-version').value.trim(),
-    ip,  env: document.getElementById('add-env').value,
-    findings: document.getElementById('add-findings').value.trim(),
+    tid: tid,
+    version:    document.getElementById('add-version').value.trim(),
+    ip:         ip,
+    env:        document.getElementById('add-env').value,
+    findings:   document.getElementById('add-findings').value.trim(),
     resolution: document.getElementById('add-resolution').value.trim(),
-    audited: true
+    audited:    true
   });
-  ['add-tid','add-version','add-ip','add-findings','add-resolution'].forEach(id=>document.getElementById(id).value='');
+  ['add-tid','add-version','add-ip','add-findings','add-resolution'].forEach(function(id){ document.getElementById(id).value=''; });
   document.getElementById('add-env').value='STAGING';
   closeModal('add-modal');
-  renderTable();
+  renderCards();
   document.getElementById('save-bar-count').textContent = kiosks.length + ' kiosks';
   showToast('Kiosk added ✓','success');
 }
@@ -778,19 +886,19 @@ function addKiosk() {
 // ══════════════════════════════════════════════
 async function saveAudit() {
   if (!CFG.scriptUrl) { openSettings(); showToast('Set your Apps Script URL first.','error-toast'); return; }
-  const sheetName = shortDate + ' - ' + auditorName;
-  const payload = {
-    action:'saveAudit', sheetName, auditor:auditorName, date:displayDate,
-    kiosks: kiosks.map(k=>[k.tid,k.version,k.ip,k.env,k.findings,k.resolution])
+  var sheetName = shortDate + ' - ' + auditorName;
+  var payload = {
+    action:'saveAudit', sheetName:sheetName, auditor:auditorName, date:displayDate,
+    kiosks: kiosks.map(function(k){ return [k.tid,k.version,k.ip,k.env,k.findings,k.resolution]; })
   };
   showToast('Saving audit…');
   try {
-    const res  = await fetch(CFG.scriptUrl, {method:'POST',body:JSON.stringify(payload)});
-    const data = await res.json();
+    var res  = await fetch(CFG.scriptUrl, {method:'POST', body:JSON.stringify(payload)});
+    var data = await res.json();
     if (data.success) {
       showToast('Audit saved ✓','success');
-      kiosks.forEach(k=>k.audited=true);
-      renderTable();
+      kiosks.forEach(function(k){ k.audited=true; });
+      renderCards();
     } else {
       showToast('Error: '+(data.error||'Unknown'),'error-toast');
     }
@@ -803,9 +911,9 @@ async function saveAudit() {
 //  DASHBOARD
 // ══════════════════════════════════════════════
 async function loadDashboard() {
-  const ok     = kiosks.filter(k=>!k.findings||k.findings.toUpperCase()==='OK').length;
-  const issues = kiosks.filter(k=>k.findings&&k.findings.toUpperCase()!=='OK').length;
-  const action = kiosks.filter(k=>{ const f=k.findings.toLowerCase(); return f.includes('offline')||f.includes('maintenance')||f.includes('error')||f.includes('black screen'); }).length;
+  var ok     = kiosks.filter(function(k){ return !k.findings||k.findings.toUpperCase()==='OK'; }).length;
+  var issues = kiosks.filter(function(k){ return k.findings&&k.findings.toUpperCase()!=='OK'; }).length;
+  var action = kiosks.filter(function(k){ var f=k.findings.toLowerCase(); return f.includes('offline')||f.includes('maintenance')||f.includes('error')||f.includes('black screen')||f.includes('no ssd'); }).length;
   document.getElementById('stat-total').textContent  = kiosks.length;
   document.getElementById('stat-ok').textContent     = ok;
   document.getElementById('stat-issues').textContent = issues;
@@ -813,118 +921,154 @@ async function loadDashboard() {
 
   document.getElementById('audit-sessions').innerHTML = '<div class="loading"><div class="spinner"></div> Loading…</div>';
   if (!CFG.scriptUrl) {
-    document.getElementById('audit-sessions').innerHTML = '<div class="empty"><h3>Apps Script not configured</h3><p>Go to ⚙ Settings to add your URL.</p></div>';
+    document.getElementById('audit-sessions').innerHTML = '<div class="empty"><h3>Apps Script not configured</h3><p>Add your URL in ⚙ Settings.</p></div>';
     return;
   }
   try {
-    const res  = await fetch(CFG.scriptUrl + '?action=listSheets');
-    const data = await res.json();
-    const sessions = (data.sheets||[]).filter(s=>s!==CFG.templateSheet&&s!=='Sheet2'&&s!=='Sheet1'&&s!==CFG.auditorSheet);
+    var res  = await fetch(CFG.scriptUrl+'?action=listSheets');
+    var data = await res.json();
+    var skip = [CFG.tmplSheet, CFG.auditorSheet, 'Sheet1', 'Sheet2', 'Sheet4'];
+    var sessions = (data.sheets||[]).filter(function(s){ return !skip.includes(s); });
+    sessions.sort(function(a,b){ return b.localeCompare(a); });
     if (sessions.length) {
-      // Sort newest first
-      sessions.sort((a,b)=>b.localeCompare(a));
-      // Highlight today's sessions
-      const rows = sessions.map(s => {
-        const isToday = s.startsWith(shortDate);
+      var rows = sessions.map(function(s) {
+        var isToday = s.startsWith(shortDate);
         return '<tr>' +
           '<td style="font-family:var(--mono);font-weight:600;">' + esc(s) +
-          (isToday?' <span class="badge badge-ok" style="font-size:9px;">TODAY</span>':'') + '</td>' +
+            (isToday ? ' <span class="badge badge-ok" style="font-size:9px;">TODAY</span>' : '') + '</td>' +
           '<td style="display:flex;gap:6px;align-items:center;">' +
-            '<button class="btn btn-outline btn-sm" onclick="openAuditView(\'' + esc(s) + '\')">👁 View</button>' +
-            '<a href="https://docs.google.com/spreadsheets/d/'+CFG.sheetId+'" target="_blank" class="btn btn-outline btn-sm" style="text-decoration:none;">↗ Sheet</a>' +
+            '<button class="btn btn-outline btn-sm" onclick="openAuditView(\''+esc(s)+'\')">👁 View</button>' +
+            '<a href="https://docs.google.com/spreadsheets/d/'+CFG.sheetId+'" target="_blank" class="btn btn-outline btn-sm" style="text-decoration:none;font-size:12px;">↗ Sheet</a>' +
           '</td></tr>';
       }).join('');
       document.getElementById('audit-sessions').innerHTML =
-        '<div class="sessions-wrap"><table><thead><tr><th>Session</th><th>Actions</th></tr></thead><tbody>' + rows + '</tbody></table></div>';
+        '<div class="sessions-wrap"><table><thead><tr><th>Session</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
     } else {
       document.getElementById('audit-sessions').innerHTML = '<div class="empty"><h3>No audit sessions yet</h3><p>Save your first audit to see history here.</p></div>';
     }
   } catch(e) {
-    document.getElementById('audit-sessions').innerHTML = '<div class="empty"><h3>Could not load sessions</h3><p>Check your Apps Script URL in ⚙ Settings.</p></div>';
+    document.getElementById('audit-sessions').innerHTML = '<div class="empty"><h3>Could not load sessions</h3><p>Check Apps Script URL in ⚙ Settings.</p></div>';
   }
 }
 
 // ══════════════════════════════════════════════
-//  AUDIT SESSION VIEWER (JSONP into modal)
+//  AUDIT SESSION VIEWER
+//  KEY FIX: sheet names with "/" (like "4/29/2026 - Shannon") break
+//  the gviz URL. We fetch via Apps Script proxy (getSheetData action)
+//  which handles any sheet name safely.
+//  Fallback: try JSONP directly (works for YYYY-MM-DD named sheets).
 // ══════════════════════════════════════════════
-function openAuditView(sheetName) {
+async function openAuditView(sheetName) {
   document.getElementById('av-title').textContent = sheetName;
   document.getElementById('av-sub').textContent   = 'Loading…';
   document.getElementById('av-body').innerHTML    = '<div class="loading"><div class="spinner"></div> Fetching audit data…</div>';
   openModal('audit-view-modal');
 
-  const cbName = 'avCb_' + Date.now();
-  let done = false;
-  const timer = setTimeout(function() {
+  // Try Apps Script proxy first (handles all sheet name formats)
+  if (CFG.scriptUrl) {
+    try {
+      var res = await fetch(CFG.scriptUrl + '?action=getSheetData&sheet=' + encodeURIComponent(sheetName));
+      var data = await res.json();
+      if (data.rows && data.rows.length) {
+        renderAuditView(data.rows, sheetName);
+        return;
+      }
+    } catch(e) {}
+  }
+
+  // Fallback: JSONP (only works if sheet name has no special chars)
+  fetchAuditViewJSONP(sheetName);
+}
+
+function fetchAuditViewJSONP(sheetName) {
+  // Encode sheet name carefully — "/" must be avoided in JSONP URL
+  // If sheet name contains "/" it will fail; the proxy above should handle it
+  var cbName = 'avCb_' + Date.now();
+  var done = false;
+  var timer = setTimeout(function(){
     if(done)return; done=true; delete window[cbName];
-    document.getElementById('av-body').innerHTML='<div class="empty"><h3>Timed out</h3><p>Could not load this session.</p></div>';
+    document.getElementById('av-body').innerHTML =
+      '<div class="empty"><h3>Could not load session</h3>' +
+      '<p>This may be because the sheet name contains special characters (e.g. <strong>/</strong>).</p>' +
+      '<p style="margin-top:8px;">Update your Apps Script to include the <strong>getSheetData</strong> action (see comments at the bottom of this file), then re-deploy.</p></div>';
   }, 10000);
 
   window[cbName] = function(data) {
     if(done)return; done=true; clearTimeout(timer); delete window[cbName];
     try {
-      const rows = data.table.rows;
-      if (!rows||!rows.length) { document.getElementById('av-body').innerHTML='<div class="empty"><h3>No data</h3></div>'; return; }
-      const all = rows.map(r=>r.c?r.c.map(c=>(c&&c.v!=null)?String(c.v).trim():''):[]);
-
-      let auditor='',date='',dataStart=0;
-      for(let i=0;i<Math.min(4,all.length);i++){
-        if(all[i][0]&&all[i][0].startsWith('Auditor:')){
-          auditor=all[i][0].replace('Auditor:','').trim();
-          date=(all[i][4]||'').replace('Date:','').trim();
-          dataStart=i+1; break;
-        }
-        if(all[i][0]&&all[i][0].toUpperCase().includes('TERMINAL')) dataStart=i+1;
-      }
-      const data2 = all.slice(dataStart).filter(r=>r[0]);
-      document.getElementById('av-sub').textContent =
-        (auditor?'Auditor: '+auditor:'')+(date?' · '+date:'');
-
-      let html='';
-      if(auditor||date){
-        html+='<div class="audit-meta">';
-        if(auditor) html+='<span>Auditor: <strong>'+esc(auditor)+'</strong></span>';
-        if(date)    html+='<span>Date: <strong>'+esc(date)+'</strong></span>';
-        html+='<span>Kiosks: <strong>'+data2.length+'</strong></span></div>';
-      }
-
-      // Summary counts
-      const okC  = data2.filter(r=>!r[4]||r[4].toUpperCase()==='OK').length;
-      const issC = data2.filter(r=>r[4]&&r[4].toUpperCase()!=='OK').length;
-      html += '<div style="display:flex;gap:10px;flex-wrap:wrap;margin:4px 0 10px;">' +
-        '<span class="badge badge-ok" style="font-size:12px;padding:4px 12px;">OK: '+okC+'</span>' +
-        '<span class="badge badge-warn" style="font-size:12px;padding:4px 12px;">Issues: '+issC+'</span>' +
-        '</div>';
-
-      html+='<div style="overflow:auto;"><table class="avt"><thead><tr>'+
-        '<th>Terminal ID</th><th>Version</th><th>IP</th><th>Env</th><th>Findings</th><th>Resolution</th>'+
-        '</tr></thead><tbody>';
-      data2.forEach(function(r){
-        const fl=(r[4]||'').toLowerCase();
-        let b;
-        if(!r[4]||r[4].toUpperCase()==='OK') b='<span class="badge badge-ok">OK</span>';
-        else if(fl.includes('offline')||fl.includes('maintenance')||fl.includes('error')||fl.includes('black screen')) b='<span class="badge badge-error">Action</span>';
-        else b='<span class="badge badge-warn">Issue</span>';
-        html+='<tr>'+
-          '<td style="font-family:var(--mono);font-weight:600;white-space:nowrap;">'+esc(r[0])+'</td>'+
-          '<td>'+esc(r[1])+'</td>'+
-          '<td style="font-family:var(--mono);font-size:12px;">'+esc(r[2])+'</td>'+
-          '<td>'+(r[3]==='PROD'?'<span class="badge badge-prod">PROD</span>':'<span class="badge badge-staging">STAGING</span>')+'</td>'+
-          '<td>'+b+(r[4]&&r[4].toUpperCase()!=='OK'?' '+esc(r[4]):'')+'</td>'+
-          '<td style="color:var(--text2);">'+esc(r[5])+'</td>'+
-          '</tr>';
-      });
-      html+='</tbody></table></div>';
-      document.getElementById('av-body').innerHTML=html;
-    } catch(e){
+      var rows = data.table.rows || [];
+      var all = rows.map(function(r){ return r.c ? r.c.map(function(c){ return (c&&c.v!=null)?String(c.v).trim():''; }) : []; });
+      renderAuditView(all, sheetName);
+    } catch(e) {
       document.getElementById('av-body').innerHTML='<div class="empty"><h3>Error</h3><p>'+e.message+'</p></div>';
     }
   };
 
-  const s=document.createElement('script');
-  s.onerror=function(){if(done)return;done=true;clearTimeout(timer);document.getElementById('av-body').innerHTML='<div class="empty"><h3>Could not load</h3></div>';};
-  s.src='https://docs.google.com/spreadsheets/d/'+CFG.sheetId+'/gviz/tq?tqx=out:json&callback='+cbName+'&sheet='+encodeURIComponent(sheetName);
+  var s = document.createElement('script');
+  s.onerror = function(){
+    if(done)return; done=true; clearTimeout(timer);
+    document.getElementById('av-body').innerHTML='<div class="empty"><h3>Could not load</h3><p>The session data could not be fetched. Check the Apps Script getSheetData action.</p></div>';
+  };
+  s.src = 'https://docs.google.com/spreadsheets/d/'+CFG.sheetId+
+    '/gviz/tq?tqx=out:json&callback='+cbName+'&sheet='+encodeURIComponent(sheetName);
   document.head.appendChild(s);
+}
+
+function renderAuditView(all, sheetName) {
+  var auditor='', date='', dataStart=0;
+  for (var i=0; i<Math.min(5,all.length); i++) {
+    var cell0 = all[i][0] || '';
+    if (cell0.startsWith('Auditor:')) {
+      auditor    = cell0.replace('Auditor:','').trim();
+      var cell4  = all[i][4] || '';
+      date       = cell4.replace('Date:','').trim();
+      dataStart  = i+1; break;
+    }
+    if (cell0.toUpperCase().includes('TERMINAL') || cell0.toUpperCase().includes('KIOSK LIST')) {
+      dataStart = i+1;
+    }
+  }
+  var rows = all.slice(dataStart).filter(function(r){ return r[0]; });
+
+  document.getElementById('av-sub').textContent =
+    (auditor?'Auditor: '+auditor:'') + (date?' · '+date:'') + ' · '+rows.length+' kiosks';
+
+  var html = '';
+  if (auditor||date) {
+    html += '<div class="audit-meta">';
+    if (auditor) html += '<span>Auditor: <strong>'+esc(auditor)+'</strong></span>';
+    if (date)    html += '<span>Date: <strong>'+esc(date)+'</strong></span>';
+    html += '<span>Kiosks: <strong>'+rows.length+'</strong></span></div>';
+  }
+
+  var okC  = rows.filter(function(r){ return !r[4]||r[4].toUpperCase()==='OK'; }).length;
+  var issC = rows.filter(function(r){ return r[4]&&r[4].toUpperCase()!=='OK'; }).length;
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:4px;">'+
+    '<span class="badge badge-ok" style="font-size:12px;padding:4px 12px;">✓ OK: '+okC+'</span>'+
+    '<span class="badge badge-warn" style="font-size:12px;padding:4px 12px;">⚠ Issues: '+issC+'</span>'+
+    '</div>';
+
+  html += '<div style="overflow:auto;"><table class="avt"><thead><tr>'+
+    '<th>Terminal ID</th><th>Version</th><th>IP</th><th>Env</th><th>Findings</th><th>Resolution</th>'+
+    '</tr></thead><tbody>';
+
+  rows.forEach(function(r) {
+    var fl=(r[4]||'').toLowerCase();
+    var b;
+    if (!r[4]||r[4].toUpperCase()==='OK') b='<span class="badge badge-ok">OK</span>';
+    else if (fl.includes('offline')||fl.includes('maintenance')||fl.includes('error')||fl.includes('black screen')||fl.includes('no ssd')) b='<span class="badge badge-error">Action</span>';
+    else b='<span class="badge badge-warn">Issue</span>';
+    html += '<tr>'+
+      '<td style="font-family:var(--mono);font-weight:600;white-space:nowrap;">'+esc(r[0])+'</td>'+
+      '<td>'+esc(r[1])+'</td>'+
+      '<td style="font-family:var(--mono);font-size:12px;">'+esc(r[2])+'</td>'+
+      '<td>'+(r[3]==='PROD'?'<span class="badge badge-prod">PROD</span>':'<span class="badge badge-staging">STAGING</span>')+'</td>'+
+      '<td>'+b+(r[4]&&r[4].toUpperCase()!=='OK'?' <span style="color:var(--text2)">'+esc(r[4])+'</span>':'')+'</td>'+
+      '<td style="color:var(--text2);">'+esc(r[5])+'</td>'+
+      '</tr>';
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('av-body').innerHTML = html;
 }
 
 // ══════════════════════════════════════════════
@@ -932,47 +1076,62 @@ function openAuditView(sheetName) {
 // ══════════════════════════════════════════════
 function openModal(id){ document.getElementById(id).classList.add('open'); }
 function closeModal(id){ document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.mbg').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }));
+document.querySelectorAll('.mbg').forEach(function(m){
+  m.addEventListener('click',function(e){ if(e.target===m) m.classList.remove('open'); });
+});
 
 // ══════════════════════════════════════════════
 //  TOAST
 // ══════════════════════════════════════════════
-let _tt;
+var _tt;
 function showToast(msg,cls){
-  const t=document.getElementById('toast');
+  var t=document.getElementById('toast');
   t.textContent=msg; t.className='show '+(cls||'');
-  clearTimeout(_tt); _tt=setTimeout(()=>t.className='',3200);
+  clearTimeout(_tt); _tt=setTimeout(function(){ t.className=''; },3200);
 }
 
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>
 
 <!--
-═══════════════════════════════════════════════════════════
-GOOGLE APPS SCRIPT — Extensions > Apps Script > paste this
-Then Deploy > New Deployment > Web App > Anyone > Me
-═══════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════
+  GOOGLE APPS SCRIPT
+  Extensions → Apps Script → paste below → Deploy → Web App
+  Execute as: Me | Who has access: Anyone
+═══════════════════════════════════════════════════════════════════
 
 function doGet(e) {
-  const p = e.parameter;
-  const ss = SpreadsheetApp.openById(getSheetId());
+  var p = e.parameter;
+  var ss = SpreadsheetApp.openById('YOUR_SHEET_ID_HERE');
+
   if (p.action === 'listSheets') {
-    return out({ sheets: ss.getSheets().map(s => s.getName()) });
+    var sheets = ss.getSheets().map(function(s){ return s.getName(); });
+    return out({ sheets: sheets });
   }
+
+  // ★ NEW: proxy sheet data — fixes "/" in sheet names breaking JSONP
+  if (p.action === 'getSheetData' && p.sheet) {
+    var sh = ss.getSheetByName(p.sheet);
+    if (!sh) return out({ rows: [], error: 'Sheet not found' });
+    var vals = sh.getDataRange().getValues();
+    var rows = vals.map(function(r){ return r.map(function(c){ return c ? String(c) : ''; }); });
+    return out({ rows: rows });
+  }
+
   return out({ ok: true });
 }
 
 function doPost(e) {
   try {
-    const d = JSON.parse(e.postData.contents);
+    var d = JSON.parse(e.postData.contents);
     if (d.action === 'saveAudit') {
-      const ss = SpreadsheetApp.openById(getSheetId());
-      let sh = ss.getSheetByName(d.sheetName);
+      var ss = SpreadsheetApp.openById('YOUR_SHEET_ID_HERE');
+      var sh = ss.getSheetByName(d.sheetName);
       if (!sh) sh = ss.insertSheet(d.sheetName);
       else sh.clearContents();
       sh.appendRow(['Kiosk List (TERMINAL ID)','VERSION','IP','PROD/STAGING','Findings','Resolution']);
       sh.appendRow(['Auditor: '+d.auditor,'','','','Date: '+d.date,'']);
-      d.kiosks.forEach(row => sh.appendRow(row));
+      d.kiosks.forEach(function(row){ sh.appendRow(row); });
       return out({ success: true });
     }
   } catch(err) {
@@ -980,19 +1139,16 @@ function doPost(e) {
   }
 }
 
-function getSheetId() {
-  // Replace with your Sheet ID, or make it dynamic via PropertiesService
-  return '1s0Kr46bF4KYHjdW67BcsECNUAssbiSylkDFUN5nNr1Y';
-}
-
 function out(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-ALSO: Add an "Auditors" sheet tab in your Google Sheet
-with auditor names in column A (one per row, starting row 1).
-═══════════════════════════════════════════════════════════
+SHEET SETUP:
+- Replace 'YOUR_SHEET_ID_HERE' with your actual sheet ID in both doGet and doPost
+- Add a sheet tab named "Auditors" with auditor names in column A (one per row)
+- Your template sheet should be named "Template"
+═══════════════════════════════════════════════════════════════════
 -->
 </body>
 </html>
