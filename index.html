@@ -516,13 +516,41 @@ function skipUrl() {
 }
 
 // ── Auditor picker ──
-function loadAuditors() {
+// Strategy: 1) Apps Script proxy  2) JSONP gviz  3) Manual fallback
+async function loadAuditors() {
+  document.getElementById('auditor-list').innerHTML =
+    '<div class="picker-loading"><div style="display:inline-flex;align-items:center;gap:8px;"><div class="spinner"></div>Loading auditors…</div></div>';
+
+  // Method 1: Apps Script proxy (works regardless of sheet sharing)
+  if (CFG.scriptUrl) {
+    try {
+      var res = await fetch(CFG.scriptUrl + '?action=getSheetData&sheet=' + encodeURIComponent(CFG.auditorSheet));
+      var data = await res.json();
+      if (data.rows && data.rows.length) {
+        var start = 0;
+        if (data.rows[0] && data.rows[0][0] &&
+            (data.rows[0][0].toLowerCase() === 'name' || data.rows[0][0].toLowerCase() === 'auditor')) {
+          start = 1;
+        }
+        var names = data.rows.slice(start)
+          .map(function(r){ return r[0] ? String(r[0]).trim() : ''; })
+          .filter(function(n){ return n.length > 0; });
+        if (names.length) { renderAuditorList(names); return; }
+      }
+    } catch(e) { /* fall through */ }
+  }
+
+  // Method 2: JSONP gviz (works if sheet is public viewer)
+  loadAuditorsJSONP();
+}
+
+function loadAuditorsJSONP() {
   var cbName = 'audCb_' + Date.now();
   var done = false;
   var timer = setTimeout(function() {
     if (done) return; done = true; delete window[cbName];
     showAuditorFallback();
-  }, 7000);
+  }, 6000);
 
   window[cbName] = function(data) {
     if (done) return; done = true; clearTimeout(timer); delete window[cbName];
@@ -530,7 +558,8 @@ function loadAuditors() {
       var rows = data.table.rows || [];
       var names = rows.map(function(r){ return r.c && r.c[0] && r.c[0].v ? String(r.c[0].v).trim() : ''; })
         .filter(function(n){ return n && n.toLowerCase() !== 'name' && n.toLowerCase() !== 'auditor'; });
-      renderAuditorList(names);
+      if (names.length) { renderAuditorList(names); }
+      else { showAuditorFallback(); }
     } catch(e) { showAuditorFallback(); }
   };
 
